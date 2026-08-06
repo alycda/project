@@ -11,6 +11,35 @@ Not installed by this template — plugins drift just like the gitignore entries
 
 If a project depends on either of these (e.g. references `docs/solutions/` from compound-engineering, or expects `understand-anything/` artifacts to be ignored already), it should say so in its own `CLAUDE.md` rather than relying on this recommendation list.
 
+## Third-party source material
+
+Read **[SOURCE-POLICY.md](./SOURCE-POLICY.md)** before committing anything you did not
+write — downloaded papers, saved articles, cloned repos, quoted documentation, vendored
+code. It is a version control rule, not a research rule: it governs what enters history,
+not what you may read.
+
+The three things that get this wrong most often:
+
+1. **Attribution is not permission.** Citing an author cures plagiarism, not copyright.
+   A correctly attributed full-text copy is still a reproduction, and committing it is
+   still a distribution.
+2. **No license means all rights reserved**, not "unclear, probably fine."
+3. **The commit is the publication event** — under jj, the auto-snapshot makes that
+   commit happen before you have decided anything. Ignore first, download second.
+
+Operationally:
+
+- Full text of a source goes under `_inspiration/` (gitignored — local only).
+- Tracked files get a **record**, not the work: citation, canonical URL, archive link,
+  access date, license status, and your own excerpts. Format in SOURCE-POLICY.md.
+- Commit a source in full only when it is public domain or open-licensed, and record
+  which, in the file itself, so the next reader knows why it is there.
+- Never write into `_inspiration/` and then reference it from tracked prose. A
+  collaborator cloning the repo does not have that directory.
+
+If you are adding tooling that downloads sources in bulk, the automated-downloading
+section of SOURCE-POLICY.md is the checklist it has to satisfy.
+
 ## `.gitignore` structure
 
 The `.gitignore` in this template is organized **top-to-bottom from most-likely-to-change to least-likely-to-change**, with explicit section headers. When you add a new ignore pattern, **find the section it belongs to and insert it there. Do NOT append blindly to the end of the file.**

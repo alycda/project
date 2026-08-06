@@ -34,8 +34,25 @@ There's no guarantee a project forked from this template uses [Jujutsu](https://
 
 So whether you adopt jj or not, having the `.gitignore` right *before* you start generating files is the cheapest intervention by orders of magnitude.
 
+### Source material you didn't write
+
+The same discipline, applied to the other thing that lands in a project tree uninvited: papers, saved articles, cloned repos, prior art. **[SOURCE-POLICY.md](./SOURCE-POLICY.md)** has the rules; the short version is that citing a source is not the same as being allowed to redistribute it, and a commit is a publication event.
+
+That's why this template ships two directories that are ignored before anything has been put in them:
+
+| Path | Holds |
+| --- | --- |
+| `_inspiration/` | Full text of captured sources — local only, never pushed |
+| `_docs/research/index/_per_source/` | Per-source working notes |
+
+Each carries a nested `.gitignore` stub (`*` + `!.gitignore`) that ignores the contents while keeping the directory trackable. Tracked files get a *record* of a source — citation, archive link, access date, license status, your excerpts — rather than the source itself, unless it's public domain or open-licensed.
+
+The ordering is the whole point, and it's the jj asymmetry above with sharper consequences: a downloaded PDF in the tree is committed by the next `jj` command you run, before you've decided anything about it.
+
 ### References
 
 - [jj working copy & `.gitignore` semantics](https://docs.jj-vcs.dev/latest/working-copy/) — auto-snapshot behavior, why pattern-before-generation matters
 - [jj-vcs/jj#5225](https://github.com/jj-vcs/jj/issues/5225) — `jj file untrack` requires the path to already be in `.gitignore`
 - [github/gitignore](https://github.com/github/gitignore) — upstream source for the macOS, Agents, and VS Code sections of this template's `.gitignore`
+- [17 U.S.C. § 106](https://www.law.cornell.edu/uscode/text/17/106) / [§ 107](https://www.law.cornell.edu/uscode/text/17/107) / [§ 105](https://www.law.cornell.edu/uscode/text/17/105) — exclusive rights, fair use, and the US federal government exclusion
+- [*Hachette Book Group v. Internet Archive*](https://www.courtlistener.com/opinion/10104144/hachette-book-group-inc-v-internet-archive/) (2d Cir. 2024) — why "I'm keeping a copy in case it disappears" is not a fair use argument
