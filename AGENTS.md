@@ -14,7 +14,7 @@ If a project depends on either of these (e.g. references `docs/solutions/` from 
 ## Third-party source material
 
 Read **[SOURCE-POLICY.md](./SOURCE-POLICY.md)** before committing anything you did not
-write — downloaded papers, saved articles, cloned repos, quoted documentation, vendored
+write (reasoning and case law live in [source-policy-notes](https://gist.github.com/alycda/5b357ba4a13e479a0d635d3c35ef6dbc), outside the repo) — downloaded papers, saved articles, cloned repos, quoted documentation, vendored
 code. It is a version control rule, not a research rule: it governs what enters history,
 not what you may read.
 

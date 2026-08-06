@@ -3,107 +3,95 @@
 Rules for third-party material a project captures: research downloads, prior art,
 quoted documentation, saved articles, cloned repos, vendored code.
 
-This is a **version control** policy. It governs one question: *what may enter this
-repository's history.* Reading, saving, and annotating sources locally is
-unconstrained. Committing them is not.
+A **version control** policy, governing one question: *what may enter this repository's
+history.* Reading, saving, and annotating sources locally is unconstrained. Committing
+them is not.
 
-Shipping this in the template is a deliberate widening of what the template is
-opinionated about — it was gitignore mechanics, and now it is also copyright risk on
-captured material. That is a decision, not drift: the two are the same discipline
-(get the ignore rule right *before* the file exists), and only one of them costs
-someone else's rights when you get it wrong. A fork that never captures third-party
-material can ignore this file entirely; nothing else depends on it.
+The model is the Zettelkasten. What goes in the box is a note in your own words with
+the reference attached — not the source. Hand-copying used to be expensive enough to
+enforce that by itself; copy-paste removed the cost and the thinking step with it. The
+two pressures happily agree: **record-not-the-work is the literature note**, so the
+safe move and the useful move are the same move.
 
-## The friction that used to do this work
+> **Reasoning lives outside this file**, in
+> [source-policy-notes](https://gist.github.com/alycda/5b357ba4a13e479a0d635d3c35ef6dbc)
+> — case law, fair-use limits, public-domain traps, license wrinkles, and the
+> Zettelkasten argument in full. Split because they rot at different rates: these rules
+> follow from a mechanical fact about `.gitignore` ordering and don't change, while the
+> reasoning is US law as of 2026-08-06 and a fork can't update a copy. Read the notes
+> when a call is close. Not legal advice; conservative and US-centric.
 
-The underlying model here is the Zettelkasten — Luhmann's slip-box, as popularized by
-Ahrens's *How to Take Smart Notes*. What went into the box was never the source. It
-was a card: the idea in your own words, with the reference attached, linked to other
-cards. The full text stayed on the shelf.
-
-That was not a rule anyone had to enforce. **Copying a text by hand was expensive
-enough that nobody did it by accident**, and the expense was doing useful work —
-transcription forced you to decide what mattered and restate it, which is the step
-that makes a note usable later. Copy-paste removed the cost and the step with it. You
-can now capture a thousand sources and understand none of them.
-
-So the discipline has to be reimposed deliberately, and this is the happy case where
-the two pressures agree: **the record-not-the-work rule is the literature note, and
-excerpt-with-commentary is elaboration.** Doing the legally safe thing and doing the
-epistemically useful thing are the same move. Nothing below asks you to trade rigor
-for caution — a repo full of verbatim mirrors is worse notes *and* worse exposure.
-
-> **Not legal advice.** Defaults that keep a public repo out of obvious trouble,
-> deliberately conservative. **Legal claims stated as of 2026-08-06** and not
-> self-updating — a fork carrying this file in 2030 is carrying 2026 statements of
-> law. Both the rules *and the reader* are assumed US-based; see
-> [Non-US sources and non-US forkers](#non-us-sources-and-non-us-forkers) before
-> applying the public-domain or excerpting rules anywhere else. A source important
-> enough that the project fails without it is a source worth getting permission for.
+Verify, don't recite: `./scripts/check-sources.sh`.
 
 ## The two rules everything else follows from
 
 **1. Attribution is not permission.** Crediting an author cures plagiarism. It does
-nothing for copyright, which governs the exclusive rights to reproduce and distribute
+nothing for copyright, which governs the rights to reproduce and distribute
 ([17 U.S.C. § 106](https://www.law.cornell.edu/uscode/text/17/106)). A perfectly cited
-full-text copy is still a reproduction, and pushing it is still a distribution. "I'm
-citing it, not claiming it" is the most common way this goes wrong.
+full-text copy is still a reproduction; pushing it is still a distribution.
 
 **2. Treat the commit as the publication event.** Legally the distribution happens at
-the push — a local commit is a reproduction, not a publication. Operationally the
-commit is the point of no return, because history is what gets pushed later and
-history is expensive to rewrite. Decide at commit time, not at push time.
+the push. Operationally the commit is the point of no return, because history is what
+gets pushed later and history is expensive to rewrite.
 
 Under [Jujutsu](https://jj-vcs.github.io/jj/) rule 2 is sharper than it sounds: the
-working copy is auto-snapshotted on every command, so a downloaded PDF sitting in the
-tree is committed by the next `jj` command you run — before you have decided anything
-about it. The ignore pattern has to exist *before* the file does. This is the same
-asymmetry [README.md](./README.md) describes for generated files; copyright is the
-case where getting it wrong costs more than a rebuild.
-
----
-
-# Operating rules
-
-Everything from here to "Why these rules" is what you actually do. The legal
-reasoning behind it comes after, for when a call is close.
+working copy auto-snapshots on every command, so a downloaded PDF is committed by the
+next `jj` command — before you have decided anything. The ignore pattern must exist
+*before* the file does. Same asymmetry [README.md](./README.md) describes for generated
+files; here getting it wrong costs more than a rebuild.
 
 ## Where things live
 
-Two directories carry a nested `.gitignore` stub (`*` + `!.gitignore`) that ignores
-their contents while keeping the directory itself trackable. **Those two paths are
-the quarantine — the `_` prefix is a naming convention, not an ignore rule.** Every
-other path under `_docs/` is tracked and will be pushed.
+Two directories carry a nested `.gitignore` stub. **Those two paths are the quarantine
+— the `_` prefix is a naming convention, not an ignore rule.** Everything else under
+`_docs/` is tracked and will be pushed.
 
 | Path | Tracked? | Holds |
 | --- | --- | --- |
-| `_inspiration/` | No — stubbed | Full text of captured sources: PDFs, cloned repos, saved HTML |
-| `_docs/research/index/_per_source/` | No — stubbed | Per-source working notes and summaries |
-| `_docs/**` (everything else) | **Yes** | ⚠️ Tracked. Putting captured full text here commits it. |
-| `SOURCES.md` (repo root) | **Yes** | Source records — the tracked artifact this policy produces |
-| `third_party/<name>/` | **Yes** | Vendored code that must build; LICENSE file kept intact |
+| `_inspiration/` | No — stubbed | Full text of captured sources |
+| `_docs/research/index/_per_source/` | No — stubbed | Per-source working notes |
+| `_docs/**` (everything else) | **Yes** | ⚠️ Putting captured full text here commits it |
+| `SOURCES.md` (repo root) | **Yes** | Source records — what this policy produces |
+| `third_party/<name>/` | **Yes** | Vendored code that must build; LICENSE intact |
 
-Verify rather than assume — `git check-ignore -v <path>` before writing a capture
-anywhere new.
+- A full-text copy under `_inspiration/` is a private copy on your disk. Low-risk
+  regardless of license; nothing here discourages it.
+- **Nothing under either quarantine path may be cited by tracked files as a source of
+  content** — a collaborator cloning the repo has neither directory.
+- Vendored *code* is the exception: it must be tracked to build, so it goes to
+  `third_party/<name>/` with its LICENSE intact, and its record notes the SPDX id.
+  Check copyleft (GPL/AGPL/LGPL/MPL) compatibility against your own license first.
 
-Three consequences to keep straight:
+## What may be committed in full
 
-- A full-text copy under `_inspiration/` is a private copy on your own disk. That is
-  low-risk regardless of license, and nothing here discourages it.
-- **Nothing under `_inspiration/` or `_docs/research/index/_per_source/` may be cited
-  by tracked files as a source of content** — a collaborator cloning the repo has
-  neither directory. Tracked prose must stand on its records and excerpts.
-- Vendored *code* is the exception to the quarantine: it has to be tracked to build.
-  It goes to `third_party/<name>/` with its LICENSE file intact, never to
-  `_inspiration/`, and its record notes the SPDX identifier.
+| Category | Test |
+| --- | --- |
+| US federal government works | Authored by a federal **employee** on duty ([§ 105](https://www.law.cornell.edu/uscode/text/17/105)). Not contractors. A `.gov` domain is not evidence. |
+| Public domain by age | US works **published more than 95 years ago** — compute it, don't read a year off this page. Excludes sound recordings and unpublished works. |
+| Government edicts | Authored by a **judge or legislature** in official capacity. Not privately drafted standards incorporated into regulation. |
+| Open-licensed | `CC-BY`, `CC-BY-SA`, `CC-BY-ND`, `CC0`, OSI licenses — plus `CC-BY-NC` for non-commercial repos only. Keep the license notice with the copy. |
 
-### Source records
+Check the site's **terms of service for a grant** before defaulting to
+all-rights-reserved — Stack Exchange answers are `CC-BY-SA-4.0`, not unlicensed. The
+[notes](https://gist.github.com/alycda/5b357ba4a13e479a0d635d3c35ef6dbc) cover the
+traps in every row above; read them before relying on one.
 
-Records live in `SOURCES.md` at the repo root. Once it passes roughly 30 entries,
-split it into `docs/sources/<slug>.md` — one record per file — and reduce `SOURCES.md`
-to an index of links. (`docs/`, not `_docs/`: records are tracked by design. The
-underscore marks directories that carry an ignore stub, and this one must not.) One store, one format; two agents capturing into the same repo
-must not build two.
+## What may not
+
+Everything else: blog posts, news articles, papers without an open license, vendor
+docs. **Absence of a license means all rights reserved**, not "unclear."
+
+These get a **record**, not the work. Excerpt what you actually engage with, with your
+commentary. Two limits: if the excerpt could substitute for reading the original it is
+too long, *and* taking the qualitative heart of a work can fail at a few hundred words
+— shorten or paraphrase when a source is unpublished or the passage is its central
+claim. Fair use is a fact-specific defense, not a permission.
+
+## Source records
+
+`SOURCES.md` at the repo root. Past ~30 entries, split into `docs/sources/<slug>.md`
+(one per file) and reduce `SOURCES.md` to an index. (`docs/`, not `_docs/` — records
+are tracked by design.) One store, one format.
 
 ```markdown
 ## <Title>
@@ -111,217 +99,73 @@ must not build two.
 - url: https://example.com/article
 - archived: https://web.archive.org/web/20260101000000/https://example.com/article
 - accessed: 2026-01-01
-- license: LicenseRef-all-rights-reserved   # SPDX identifier; see below
-- flags: none            # or: noncommercial-only | sharealike-integrated | status-unverified
+- license: LicenseRef-all-rights-reserved   # SPDX id
+- flags: none            # noncommercial-only | sharealike-integrated | status-unverified
 - local: _inspiration/articles/example-article/   # optional; not tracked
-- sha256: <digest>                                # required for load-bearing sources
+- sha256: <digest>                                # load-bearing sources only
 
-> Excerpt of the passage that matters.
+> The excerpt worth arguing with.
 
-Why it matters here, what it changes, what it gets wrong.
+What it changes for us, and where it is wrong.
 ```
 
-Use **[SPDX license identifiers](https://spdx.org/licenses/)** for `license:` —
-`CC-BY-4.0`, `CC-BY-SA-4.0`, `CC-BY-NC-4.0`, `CC0-1.0`, `MIT`, `Apache-2.0`,
-`GPL-3.0-or-later`. For the two cases SPDX has no identifier for, use
-`LicenseRef-all-rights-reserved` and `LicenseRef-unknown`. SPDX rather than ad-hoc
-words because it is the vocabulary [REUSE](https://reuse.software/) and every license
-scanner already validate against — this format is deliberately a thin markdown
-wrapper over conventions that have tooling, not a new standard.
+Use [SPDX identifiers](https://spdx.org/licenses/) for `license:`, plus
+`LicenseRef-all-rights-reserved` and `LicenseRef-unknown` for the two cases SPDX has no
+id for. SPDX because it is what [REUSE](https://reuse.software/) and every license
+scanner already validate against — this is a thin wrapper over existing conventions,
+not a new standard. `LicenseRef-unknown` is honest, handled as all-rights-reserved, and
+never a blocker on capture.
 
-`LicenseRef-unknown` is a valid, honest value. It is handled as all-rights-reserved
-and is a prompt to check before the repo goes public — not a blocker on capture.
+**Load-bearing** means: if the source turned out to say something different, a decision
+in this repo would change. Those get `sha256:`.
 
-**Load-bearing** means: if this source turned out to say something different, a decision in the repo would change. Those get `sha256:`; everything else does not.
-
-The pre-publication sweep is one command, not a re-read:
+Before publishing or any commercial use:
 
 ```sh
-rg -n 'noncommercial-only|sharealike-integrated|status-unverified' SOURCES.md docs/sources/ 2>/dev/null
+rg -n 'noncommercial-only|sharealike-integrated|status-unverified' SOURCES.md docs/sources/
 ```
-
-Run it before making a repo public and before any commercial use. `flags:` values: `noncommercial-only`
-for BY-NC, `sharealike-integrated` for a BY-SA source woven into your own prose,
-`status-unverified` when you recorded a license you did not confirm at the source.
-
-## What may be committed in full
-
-| Category | Test | Notes |
-| --- | --- | --- |
-| US federal government works | Authored by a **federal employee** in the course of their duties | [17 U.S.C. § 105](https://www.law.cornell.edu/uscode/text/17/105) — no copyright at all. Does **not** extend to contractor-authored works. § 105 bars *originally federal* authorship only — the government can hold copyrights assigned to it. A `.gov` domain is not evidence of federal authorship. |
-| Public domain by age | **Textual/visual works published in the US** more than **95 years ago** — compute it, do not read a year off this page (1930 or earlier during 2026; the window advances every 1 January) | Excludes **sound recordings** — pre-1972 recordings run 95 years plus a transition period under the Music Modernization Act, so a 1930 recording is protected until 2031. Excludes **unpublished** works (letters, manuscripts, archival photos) — those run life+70, or 120 years from creation, regardless of age. New editions, translations, and restorations carry their own fresh copyright. |
-| Government edicts | Authored by a **judge or legislature acting in official capacity** — statutes, judicial opinions, legislature-authored annotations | *Georgia v. Public.Resource.Org* (2020). The doctrine turns on **who authored** the text, not on whether it has legal force. Privately authored standards incorporated by reference into regulation (building codes, ASTM/NFPA) remain copyrighted — *ASTM v. Public.Resource.Org* (D.C. Cir. 2023) resolved public access on fair use, not on loss of copyright. Treat non-federal agency regulations as `LicenseRef-unknown`, which this policy handles as all-rights-reserved — a policy's job is to supply the default under uncertainty. |
-| Open-licensed | `CC-BY`, `CC-BY-SA`, `CC-BY-ND`, `CC0`, or an OSI license — plus `CC-BY-NC` **for non-commercial repos only** | Verbatim redistribution is what these grant. Keep the attribution and license notice **with** the copy. Read the wrinkles below before relying on one. |
-
-Open-license wrinkles worth reading before relying on one:
-
-- **Site terms of service can be the license grant.** Stack Exchange contributions are
-  `CC-BY-SA-4.0` (3.0 before 2018), so Stack Overflow answers are open-licensed, not
-  all-rights-reserved. Many wikis and dataset portals are the same. Check the ToS for
-  a *grant* before recording a source as all-rights-reserved — ToS cuts both ways, and
-  this policy treats it as a restriction elsewhere only because that is the more common
-  case, not the only one.
-- **BY-SA** attaches share-alike only to *Adapted Material*. Filing an unmodified copy
-  alongside your own work produces a *Collection*, which does not trigger it; weaving
-  the text into your own prose likely produces Adapted Material, which does. (Those are
-  the CC 4.0 terms — "mere aggregation" is GPL vocabulary and will not be found in the
-  CC deed you open to check.) Flag integration as `sharealike-integrated`.
-- **Copyleft code licenses** (`GPL`, `AGPL`, `LGPL`, `MPL`) are the code-side of
-  share-alike and stricter than BY-SA. Vendoring copyleft source can impose obligations
-  on the combined work and may be incompatible with the repo's own license. Keep it in
-  `third_party/<name>/` with its LICENSE intact, record the SPDX identifier, and check
-  compatibility against your own license *before* committing. AGPL's § 13 network
-  clause reaches anything you expose as a service.
-- **BY-NC** is fine for a personal or research repo and a problem the moment the repo
-  feeds commercial work. Flag it `noncommercial-only` at capture time, not at launch.
-- **BY-ND** still permits verbatim redistribution — it bars derivatives, not copies.
-- **CC0 / public-domain dedications** still deserve attribution as practice, just not
-  as license.
-
-## What may not
-
-Everything else: blog posts, news articles, papers without an open license, vendor
-documentation, anything with no license grant at all. Absence of a license means
-**all rights reserved**, not "unclear."
-
-For these, the repo gets a **record**, not the work. Excerpting the passages you
-actually engage with, surrounded by your commentary, sits squarely within the purposes
-[§ 107](https://www.law.cornell.edu/uscode/text/17/107) enumerates — criticism,
-comment, scholarship, research. But § 107 is a fact-specific four-factor *defense*
-asserted after suit, not a permission granted in advance, so a favorable purpose is a
-starting position and not a safe harbor.
-
-Two limits on excerpt length, not one:
-
-- If the excerpt could substitute for reading the original, it is too long.
-- Quantity is not the only limit. Taking the qualitative *heart* of a work can fail at
-  a few hundred words — *Harper & Row v. Nation Enterprises* (1985) found ~300 words
-  from a 200,000-word memoir infringing — and excerpting an **unpublished** source
-  weighs against you. When a source is unpublished or the passage is its central claim,
-  shorten it or paraphrase.
 
 ## Capture protocol
 
-For each source, at capture time — not later, when the tab is closed and the license
-footer is a memory:
+At capture time — not later, when the tab is closed and the license footer is a memory:
 
-1. **Determine status.** Public domain, open license (which SPDX identifier), or all
-   rights reserved. Check the ToS for a grant before defaulting. Record the answer even
-   when it is `LicenseRef-unknown`, which is treated as all rights reserved.
-2. **Archive it.** `https://web.archive.org/save/<url>` — archive.today is a
-   manual-only fallback (CAPTCHA-gated, not automatable). Record the snapshot URL. If
-   no snapshot can be obtained, the record carries
-   `archived: none  # save failed YYYY-MM-DD, <reason>` rather than omitting the field.
-   Note this relocates the full-text copy to a third party rather than eliminating it;
-   it is the right operational move, not a legal transformation.
-3. **Record the access date.** ISO 8601. What you read is what you cite.
-4. **Fetch into the quarantine, never the repo root.** The fetch command itself must
-   target it — `curl -o _inspiration/<slug>/<file>`,
-   `git clone <url> _inspiration/repos/<name>`. A bare `curl -O` from the repo root
-   writes to a tracked path, and under jj the next command commits it; treat that as
-   already committed and handle it per
-   [If something already leaked](#if-something-already-leaked-into-history). Required
-   for load-bearing sources (step 6 hashes this copy), optional otherwise.
-5. **Excerpt into the record** — the passages you engage with, with your notes, within
-   both limits above.
-6. **Hash load-bearing sources.** `shasum -a 256 <file>`, digest into the record. This
-   proves your copy is unchanged since you hashed it; the *archive snapshot* is what
-   carries third-party timestamp evidence. Dynamic pages will not reproduce their hash
-   on re-fetch.
+1. **Determine status.** PD, open license (which SPDX id), or all rights reserved.
+   Check ToS for a grant first. Record `LicenseRef-unknown` rather than guessing.
+2. **Archive it.** `https://web.archive.org/save/<url>` (archive.today is manual-only,
+   CAPTCHA-gated). If no snapshot is possible, record
+   `archived: none  # save failed YYYY-MM-DD, <reason>` — never omit the field. This
+   relocates the copy to a third party rather than eliminating it.
+3. **Record the access date.** ISO 8601.
+4. **Fetch into the quarantine, never the repo root.** The command itself must target
+   it: `curl -o _inspiration/<slug>/<file>`, `git clone <url> _inspiration/repos/<name>`.
+   A bare `curl -O` lands in a tracked path and jj commits it on the next command.
+   Required for load-bearing sources (step 6 hashes this copy).
+5. **Excerpt into the record**, within both limits above.
+6. **Hash load-bearing sources.** `shasum -a 256 <file>`. Proves your copy is unchanged
+   since you hashed it; the archive snapshot carries the third-party timestamp.
 
 ## Automated downloading
 
-Scoped deliberately: this section is about retrieval conduct rather than commit
-history, and it earns its place because retrieval tooling is what fills
-`_inspiration/`, and because none of it does these three things for you.
+Retrieval tooling is what fills `_inspiration/`, and it does none of this for you:
 
-- **robots.txt is usually not consulted.** Download scripts fetch what they are given.
-  If a domain forbids crawling, that is on the operator to catch. Terms of service are
-  a contract question independent of copyright — a permissively licensed work can still
-  sit behind a ToS that forbids scraping it.
-- **Rate limits are a courtesy that becomes a ban.** Per-domain throttling (arxiv.org
-  asks 1 request per 3 seconds) is the difference between a tool and an incident.
-- **Auth-gated and paywalled sources fail loudly, and that is correct.** A 401/403 is
-  the system working. Do not add credential handling to make it go away; mark the entry
-  skipped and cite it without the copy.
+- **robots.txt is usually not consulted.** ToS is a contract question independent of
+  copyright — a permissively licensed work can still sit behind a ToS forbidding
+  scraping.
+- **Rate limits are a courtesy that becomes a ban.** arxiv.org asks 1 request / 3s.
+- **401/403 is the system working.** Mark it skipped and cite without the copy; don't
+  add credential handling to defeat it.
 
-Treat tool output as raw input to this policy, never as evidence a source was safe to
-take.
+Tool output is raw input to this policy, never evidence a source was safe to take.
 
 ## If something already leaked into history
 
 Ignoring it now does not remove it from earlier commits.
 
-- **git**: add the pattern, `git rm --cached <path>`, then rewrite history with
-  [`git filter-repo`](https://github.com/newren/git-filter-repo) if the commits were
-  pushed. Force-push, and assume anyone who fetched still has it.
-- **jj**: add the pattern to `.gitignore` *first*, then `jj file untrack <path>`. That
-  removes it going forward; earlier commits need `jj squash`/rebase surgery. See
+- **git**: add the pattern, `git rm --cached <path>`, then
+  [`git filter-repo`](https://github.com/newren/git-filter-repo) if already pushed.
+  Force-push, and assume anyone who fetched still has it.
+- **jj**: add the pattern to `.gitignore` *first*, then `jj file untrack <path>`.
+  Earlier commits need `jj squash`/rebase surgery — see
   [jj-vcs/jj#5225](https://github.com/jj-vcs/jj/issues/5225).
 
-Both are unpleasant enough to justify the ignore-first discipline this template is
-built around.
-
----
-
-# Why these rules
-
-## What the "keep a copy in case it disappears" instinct runs into
-
-It is weaker than it feels. In [*Hachette Book Group v. Internet
-Archive*](https://www.courtlistener.com/opinion/10104144/hachette-book-group-inc-v-internet-archive/)
-(2d Cir. 2024) the court held that medium-shifting a full text for the same reading
-purpose is not transformative, and that public redistribution substituting for the
-licensed market defeats fair use.
-
-The detail that matters here: the Second Circuit found the Internet Archive's use
-**non-commercial**, reversing the district court on that point — and IA still lost. So
-"it's only a personal repo" is not the shield it sounds like; commerciality and scale
-were not the deciding axis. What distinguishes this policy is narrower and more
-durable: **a tracked full-text copy is redistribution; a private copy on your own disk
-is not.** That is the whole reason the quarantine directories exist.
-
-(The case concerned a lending program, not preservation copying — § 108 library
-preservation was never reached.)
-
-## Prior art
-
-The convention this format wraps already exists; what does not exist is a convention
-for *research-capture* tooling.
-
-**The class that commits third-party material has mature, machine-checkable
-conventions**, and this policy borrows rather than invents:
-
-| Convention | Solves | Adopted here? |
-| --- | --- | --- |
-| [SPDX identifiers](https://spdx.org/licenses/) | Naming a license unambiguously | **Yes** — the `license:` field |
-| [REUSE Specification](https://reuse.software/) | Per-file license declaration, with a linter | Compatible by design; adopt `reuse lint` if the repo grows into it |
-| Debian `debian/copyright` | Machine-readable per-source copyright for a whole package | Format is heavier than a template needs; the per-source-record idea is taken from it |
-| `third_party/` layout | Vendored code with obligations intact | **Yes** — the `third_party/<name>/` row. `THIRD_PARTY_NOTICES` aggregation is *not* adopted: with per-source records in `SOURCES.md` it would be a second place to forget to update. Add one if you ship binaries whose licenses require notice redistribution. |
-
-The research-agent tools (gpt-researcher, STORM, open_deep_research, doxa-research)
-were surveyed first and are *not* cited as evidence here: they are retrieval libraries
-that never commit what they fetch, so their silence on the question proves nothing
-either way. The conventions above stand on their own.
-
-## Non-US sources and non-US forkers
-
-**Non-US sources.** Berne means no formalities: no notice, no registration, still
-protected. Terms vary — life + 70 in the US and EU, life + 50 in much of the world,
-with country-specific extensions. "Public domain in the US" is not "public domain." EU
-database rights and national press-publisher rights protect collections that carry no
-US analogue. When a source is foreign and load-bearing, treat status as unknown until
-checked.
-
-**Non-US forkers.** This policy assumes a US-based *operator* as well as US sources.
-If your jurisdiction is not the US, two rules do not transfer:
-
-- The **publication-date public domain table** — most jurisdictions compute terms from
-  the author's death, not publication, so "published 1930 or earlier" clears nothing.
-- The **excerpt-with-commentary allowance** — civil-law systems grant enumerated
-  quotation rights rather than a general fair-use test, and they are narrower and
-  condition the quote on serving a purpose in an independent work (Germany's § 51 UrhG
-  *Zitatrecht*, for example).
-
-Substitute your jurisdiction's equivalents in those two places before relying on the
-rest.
+Both are unpleasant enough to justify the ignore-first discipline.

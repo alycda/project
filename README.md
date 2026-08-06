@@ -65,7 +65,6 @@ The ordering is the whole point, and it's the jj asymmetry above with sharper co
 - [jj working copy & `.gitignore` semantics](https://docs.jj-vcs.dev/latest/working-copy/) — auto-snapshot behavior, why pattern-before-generation matters
 - [jj-vcs/jj#5225](https://github.com/jj-vcs/jj/issues/5225) — `jj file untrack` requires the path to already be in `.gitignore`
 - [github/gitignore](https://github.com/github/gitignore) — upstream source for the macOS, Agents, and VS Code sections of this template's `.gitignore`
-- [17 U.S.C. § 106](https://www.law.cornell.edu/uscode/text/17/106) / [§ 107](https://www.law.cornell.edu/uscode/text/17/107) / [§ 105](https://www.law.cornell.edu/uscode/text/17/105) — exclusive rights, fair use, and the US federal government exclusion
-- [*Hachette Book Group v. Internet Archive*](https://www.courtlistener.com/opinion/10104144/hachette-book-group-inc-v-internet-archive/) (2d Cir. 2024) — why "I'm keeping a copy in case it disappears" is not a fair use argument
+- [source-policy-notes](https://gist.github.com/alycda/5b357ba4a13e479a0d635d3c35ef6dbc) — the reasoning behind SOURCE-POLICY.md: *Hachette*, fair-use limits, public-domain traps, license wrinkles, and the Zettelkasten argument in full. Kept outside the repo because case law dates and a fork can't update a copy.
 - [SPDX license identifiers](https://spdx.org/licenses/) and the [REUSE Specification](https://reuse.software/) — the existing conventions `SOURCES.md` records wrap, rather than reinventing
 - Sönke Ahrens, *How to Take Smart Notes* — the slip-box argument that elaboration, not collection, is where notes become useful
