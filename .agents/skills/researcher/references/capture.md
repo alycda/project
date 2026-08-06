@@ -27,7 +27,7 @@ The sub-agent reads the markdown files in `_docs/research/`, extracts URLs, clas
 
 ## Procedure
 
-1. Scan every `_docs/research/*.md` — the perspective workers (`theory.md`, `tooling.md`, `industry.md`) plus any `*-deep-research.md` or other-provider output present. Prefer each file's **Source ledger** section; fall back to scraping URLs from prose only when a worker omitted one.
+1. Scan every `_docs/research/*.md` — the perspective workers (`theory.md`, `tooling.md`, `industry.md`) plus any `*-deep-research.md` or other-provider output present. Prefer each file's **Source ledger** section; fall back to scraping URLs from prose only when a worker omitted one. A provenance claim with no URL attached ("this is from X") is not scrapeable and must not be resolved from memory — supplying a plausible URL for it converts an unfalsifiable claim into a confident-looking record. Carry it into the manifest as `flags: status-unverified` with the claim in `notes`, or flag it back to the worker for the actual link.
 2. Deduplicate, normalize (canonical arxiv form, strip query strings, expand short URLs), and classify (`paper` / `repo` / `article` / `docs` / `other`).
 3. **Determine `license` for each new URL** — see "Licensing at manifest time" below.
 4. Read existing `_docs/research/downloads.yaml` if it exists.

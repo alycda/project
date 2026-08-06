@@ -22,6 +22,12 @@ Each worker returns a **Source ledger** — a flat, deduplicated list of every U
 cites. `capture.md` reads that ledger first and only falls back to scraping prose.
 Ask for it explicitly; workers omit it otherwise.
 
+The same discipline applies *inside* the prose: any provenance claim — "this is from
+X", "the NASA piece" — carries X's URL in the sentence that makes it, or is written as
+**(unverified)**. A claim with the link dropped is unfalsifiable at the moment it is
+read; one such claim survived into a tracked file as a false public-domain lead because
+"NASA" was asserted in prose while the URL (a private company's blog) was dropped.
+
 ## Optional: hosted Deep Research
 
 Browser Deep Research still outruns `WebSearch` + `WebFetch` on breadth-of-citations
@@ -75,3 +81,4 @@ Run the Claude-only default, which stays in-session.
 - `git check-ignore -v _docs/research/theory.md` returns a match — the reports are
   quarantined, not tracked
 - Ledgers contain URLs, not paraphrased citations ("the Raft paper" is not a source)
+- Provenance claims in prose carry their URL inline or are marked (unverified)
