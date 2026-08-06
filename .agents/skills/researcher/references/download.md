@@ -1,6 +1,6 @@
 # Download — Download Materials
 
-Populates `_inspiration/` with all materials in `_docs/research/downloads.yaml`.
+Populates `_inspiration/` with all materials in `docs/research/downloads.yaml`.
 
 Download is **mechanical**, not LLM-driven. The `kind` field on each yaml entry (decided during capture) is enough to dispatch each download to the right tool — `curl` for papers/articles, `git clone` for repos, `wget` for docs. No agent judgment needed. The skill invokes `scripts/download.py` via a single Bash call instead of spawning Agent sub-agents.
 
@@ -18,8 +18,8 @@ The script:
 
 1. Ensures **two** nested `.gitignore` stubs exist (idempotent — never overwrites an existing one):
    - `_inspiration/.gitignore` → `*` + `!.gitignore`. Everything in it is someone else's work in full.
-   - `_docs/research/.gitignore` → `/*.md` + `!/.gitignore`. Quarantines only the raw research reports sitting directly in that directory — they quote sources at length and are the least defensible thing in the tree to push. The leading `/` is load-bearing: a bare `*.md` would also swallow `index/*.md` one level down, and the index is your own summarization, which you *want* tracked. `downloads.yaml` stays tracked for the same reason — it is the capture record.
-2. Reads `_docs/research/downloads.yaml`, filters `status: pending`.
+   - `docs/research/.gitignore` → `/*.md` + `!/.gitignore`. Quarantines only the raw research reports sitting directly in that directory — they quote sources at length and are the least defensible thing in the tree to push. The leading `/` is load-bearing: a bare `*.md` would also swallow `index/*.md` one level down, and the index is your own summarization, which you *want* tracked. `downloads.yaml` stays tracked for the same reason — it is the capture record.
+2. Reads `docs/research/downloads.yaml`, filters `status: pending`.
 3. Fans out N parallel workers (default 5) via Python's `ThreadPoolExecutor`.
 4. Each worker matches on `kind` and runs the appropriate tool.
 5. Updates the yaml atomically under `fcntl.flock` (Unix) or an in-process lock (Windows) as each download completes.
@@ -53,13 +53,13 @@ Parallel workers use `fcntl.flock(LOCK_EX)` (Unix) or a Python `threading.Lock` 
 
 ## Inputs
 
-- `_docs/research/downloads.yaml` (produced by Capture)
+- `docs/research/downloads.yaml` (produced by Capture)
 - `_inspiration/.gitignore` (write-only; nested stub created idempotently)
 
 ## Output
 
 - Files under `_inspiration/<kind>/<...>/`
-- `_docs/research/downloads.yaml` updated:
+- `docs/research/downloads.yaml` updated:
   - `status: done` + `path` for each successful entry
   - `status: failed` + `notes` for failures
 - `_inspiration/.gitignore` exists and contains `*` + `!.gitignore`

@@ -1,16 +1,16 @@
 # Indexing — Semantic Index
 
-Builds `_docs/research/index/` from `_inspiration/`.
+Builds `docs/research/index/` from `_inspiration/`.
 
 ## The Original Prompt (subject to user modifications)
 
-> Construct a semantic index of our research materials. The _inspiration/ directory contains all known prior art for our project; however, the token volume is very large. Construct _docs/research/index/ as a semantic index: topics, citations, cross-references, bookmarks, tags, clusters, themes — anything which will aid a future coding agent in quickly locating the most dense and useful aspects of our prior art materials. Be sure to use sub-agents for each project — think MapReduce.
+> Construct a semantic index of our research materials. The _inspiration/ directory contains all known prior art for our project; however, the token volume is very large. Construct docs/research/index/ as a semantic index: topics, citations, cross-references, bookmarks, tags, clusters, themes — anything which will aid a future coding agent in quickly locating the most dense and useful aspects of our prior art materials. Be sure to use sub-agents for each project — think MapReduce.
 
 ## Procedure
 
 ### 1 — Map: Per-Source Sub-Agents
 
-Spawn one sub-agent per top-level item in `_inspiration/` (each repo, each paper, each article). Each sub-agent reads its assigned material and produces a structured summary at `_docs/research/index/_per_source/<source-id>.md` containing:
+Spawn one sub-agent per top-level item in `_inspiration/` (each repo, each paper, each article). Each sub-agent reads its assigned material and produces a structured summary at `docs/research/index/_per_source/<source-id>.md` containing:
 
 - Provenance header — `url`, `license`, `accessed`, `archived` copied from that source's `downloads.yaml` entry. One line, first thing in the file, so no summary is ever separated from the terms it was made under.
 - 3-sentence elevator summary
@@ -29,17 +29,17 @@ Once all per-source summaries exist, run aggregation (single sub-agent or inline
 
 | File | Contents |
 |---|---|
-| `_docs/research/index/by-topic.md` | Topics → list of sources covering them, sorted by density |
-| `_docs/research/index/by-tag.md` | Tags → list of sources |
-| `_docs/research/index/clusters.md` | Thematic clusters (e.g., "ABI diffing tools", "WASM browser test runners", "CRDT theory papers") |
-| `_docs/research/index/top-N.md` | Top 10–20 must-read sources by density (deduplicated, ranked) |
-| `_docs/research/index/cross-references.md` | Graph-shaped: source A cites source B with `<context>` |
-| `_docs/research/index/open-questions.md` | Things prior art doesn't answer; gaps where the project will have to invent |
-| `_docs/research/index/README.md` | Entry point for downstream agents; explains the index structure |
+| `docs/research/index/by-topic.md` | Topics → list of sources covering them, sorted by density |
+| `docs/research/index/by-tag.md` | Tags → list of sources |
+| `docs/research/index/clusters.md` | Thematic clusters (e.g., "ABI diffing tools", "WASM browser test runners", "CRDT theory papers") |
+| `docs/research/index/top-N.md` | Top 10–20 must-read sources by density (deduplicated, ranked) |
+| `docs/research/index/cross-references.md` | Graph-shaped: source A cites source B with `<context>` |
+| `docs/research/index/open-questions.md` | Things prior art doesn't answer; gaps where the project will have to invent |
+| `docs/research/index/README.md` | Entry point for downstream agents; explains the index structure |
 
 ### 3 — Surface Open Questions
 
-Aggregate "things the prior art doesn't answer" across all sources. Write `_docs/research/index/open-questions.md`.
+Aggregate "things the prior art doesn't answer" across all sources. Write `docs/research/index/open-questions.md`.
 
 ### 4 — Emit `SOURCES.md`
 
@@ -73,13 +73,13 @@ If `SOURCES.md` already exists, upsert by `url` and preserve hand-written excerp
 ## Inputs
 
 - `_inspiration/` (everything)
-- `_docs/research/*.md` (worker reports, for Top-N hints)
-- `_docs/research/downloads.yaml` (for source-id → path mapping)
+- `docs/research/*.md` (worker reports, for Top-N hints)
+- `docs/research/downloads.yaml` (for source-id → path mapping)
 
 ## Output
 
 ```
-_docs/research/index/
+docs/research/index/
 ├── README.md                 # entry point
 ├── by-topic.md
 ├── by-tag.md

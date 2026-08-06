@@ -54,9 +54,9 @@ So this template ships two directories that are ignored before anything has been
 | Path | Holds |
 | --- | --- |
 | `_inspiration/` | Full text of captured sources — local only, never pushed |
-| `_docs/research/index/_per_source/` | Per-source working notes |
+| `docs/research/index/_per_source/` | Per-source working notes |
 
-Each carries a nested `.gitignore` stub (`*` + `!.gitignore`) that ignores the contents while keeping the directory trackable. **Those two paths are the quarantine — the `_` prefix is a naming convention, not an ignore rule**, so everything else under `_docs/` is tracked. Tracked files get a *record* of a source — citation, archive link, access date, SPDX license identifier, your excerpts — rather than the source itself, unless it's public domain or open-licensed.
+Each carries a nested `.gitignore` stub (`*` + `!.gitignore`) that ignores the contents while keeping the directory trackable. **Those two paths are the quarantine — the `_` prefix is a naming convention, not an ignore rule**, so everything else under `docs/` is tracked. Tracked files get a *record* of a source — citation, archive link, access date, SPDX license identifier, your excerpts — rather than the source itself, unless it's public domain or open-licensed.
 
 Both directories are inert if you never capture third-party material; a fork that has no research workflow can delete them and ignore the policy.
 

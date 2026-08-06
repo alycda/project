@@ -1,12 +1,12 @@
 # Capture — Download Manifest
 
-Produces `_docs/research/downloads.yaml`.
+Produces `docs/research/downloads.yaml`.
 
 ## The Original Prompt (subject to user modifications)
 
-> Look through _docs/research. I want to produce a list of unique URLs and repos which will be downloaded to act as prior art for our upcoming project.
+> Look through docs/research. I want to produce a list of unique URLs and repos which will be downloaded to act as prior art for our upcoming project.
 >
-> Because research results will continue to stream in from other researchers, create a _docs/research/downloads.yaml to track which papers, repos, articles etc have already been downloaded. The format should be suitable for idempotent upsert as new URLs are discovered.
+> Because research results will continue to stream in from other researchers, create a docs/research/downloads.yaml to track which papers, repos, articles etc have already been downloaded. The format should be suitable for idempotent upsert as new URLs are discovered.
 
 ## Dispatch
 
@@ -23,16 +23,16 @@ Agent({
 })
 ```
 
-The sub-agent reads the markdown files in `_docs/research/`, extracts URLs, classifies them, and writes the manifest. If Haiku produces a misclassification you can spot during download downloads, re-run that one entry through the parent provider — don't escalate the whole step.
+The sub-agent reads the markdown files in `docs/research/`, extracts URLs, classifies them, and writes the manifest. If Haiku produces a misclassification you can spot during download downloads, re-run that one entry through the parent provider — don't escalate the whole step.
 
 ## Procedure
 
-1. Scan every `_docs/research/*.md` — the perspective workers (`theory.md`, `tooling.md`, `industry.md`) plus any `*-deep-research.md` or other-provider output present. Prefer each file's **Source ledger** section; fall back to scraping URLs from prose only when a worker omitted one. A provenance claim with no URL attached ("this is from X") is not scrapeable and must not be resolved from memory — supplying a plausible URL for it converts an unfalsifiable claim into a confident-looking record. Carry it into the manifest as `flags: status-unverified` with the claim in `notes`, or flag it back to the worker for the actual link.
+1. Scan every `docs/research/*.md` — the perspective workers (`theory.md`, `tooling.md`, `industry.md`) plus any `*-deep-research.md` or other-provider output present. Prefer each file's **Source ledger** section; fall back to scraping URLs from prose only when a worker omitted one. A provenance claim with no URL attached ("this is from X") is not scrapeable and must not be resolved from memory — supplying a plausible URL for it converts an unfalsifiable claim into a confident-looking record. Carry it into the manifest as `flags: status-unverified` with the claim in `notes`, or flag it back to the worker for the actual link.
 2. Deduplicate, normalize (canonical arxiv form, strip query strings, expand short URLs), and classify (`paper` / `repo` / `article` / `docs` / `other`).
 3. **Determine `license` for each new URL** — see "Licensing at manifest time" below.
-4. Read existing `_docs/research/downloads.yaml` if it exists.
+4. Read existing `docs/research/downloads.yaml` if it exists.
 5. Upsert: add new URLs as `status: pending`; preserve existing entries' `status`, `path`, `license`, `accessed`, `archived`, `flags`, and `notes` fields. Track `cited_in` membership across ALL six files — the same URL cited by both `claude.md` (CLI) and `claude-deep-research.md` (hosted) gets both names in its `cited_in` list.
-6. Write `_docs/research/downloads.yaml`.
+6. Write `docs/research/downloads.yaml`.
 
 ## Licensing at manifest time
 
@@ -83,7 +83,7 @@ See `templates/downloads.yaml.example` for format. Each entry has:
 
 ## Verification
 
-- All `_docs/research/*.md` URLs appear in the yaml
+- All `docs/research/*.md` URLs appear in the yaml
 - No duplicate `url` values
 - Existing entries' `status`, `path`, `notes` preserved across re-runs
 - yaml validates against the schema in `templates/downloads.yaml.example`

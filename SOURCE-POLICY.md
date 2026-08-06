@@ -50,13 +50,13 @@ files; here getting it wrong costs more than a rebuild.
 
 Two directories carry a nested `.gitignore` stub. **Those two paths are the quarantine
 — the `_` prefix is a naming convention, not an ignore rule.** Everything else under
-`_docs/` is tracked and will be pushed.
+`docs/` is tracked and will be pushed.
 
 | Path | Tracked? | Holds |
 | --- | --- | --- |
 | `_inspiration/` | No — stubbed | Full text of captured sources |
-| `_docs/research/index/_per_source/` | No — stubbed | Per-source working notes |
-| `_docs/**` (everything else) | **Yes** | ⚠️ Putting captured full text here commits it |
+| `docs/research/index/_per_source/` | No — stubbed | Per-source working notes |
+| `docs/**` (everything else) | **Yes** | ⚠️ Putting captured full text here commits it |
 | `SOURCES.md` (repo root) | **Yes** | Source records — what this policy produces |
 | `third_party/<name>/` | **Yes** | Vendored code that must build; LICENSE intact |
 
@@ -104,7 +104,7 @@ different act from a first.
 ## Source records
 
 `SOURCES.md` at the repo root. Past ~30 entries, split into `docs/sources/<slug>.md`
-(one per file) and reduce `SOURCES.md` to an index. (`docs/`, not `_docs/` — records
+(one per file) and reduce `SOURCES.md` to an index. (`docs/`, not `docs/` — records
 are tracked by design.) One store, one format.
 
 ```markdown

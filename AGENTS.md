@@ -30,9 +30,9 @@ The three things that get this wrong most often:
 Operationally:
 
 - **Only two paths are quarantined**: `_inspiration/` and
-  `_docs/research/index/_per_source/`, each via a nested `.gitignore` stub. The `_`
+  `docs/research/index/_per_source/`, each via a nested `.gitignore` stub. The `_`
   prefix is a naming convention, **not** an ignore rule — everything else under
-  `_docs/` is tracked and will be pushed. Run `git check-ignore -v <path>` before
+  `docs/` is tracked and will be pushed. Run `git check-ignore -v <path>` before
   writing a capture anywhere new; do not infer from the underscore.
 - Point the fetch itself at the quarantine (`curl -o _inspiration/...`,
   `git clone <url> _inspiration/repos/<name>`). A bare `curl -O` from the repo root
@@ -44,7 +44,7 @@ Operationally:
   which, in the file itself, so the next reader knows why it is there. Check the site's
   terms of service for a *grant* before recording something as all-rights-reserved —
   Stack Exchange answers, for instance, are `CC-BY-SA-4.0`.
-- Never cite `_inspiration/` or `_docs/research/index/_per_source/` from tracked prose.
+- Never cite `_inspiration/` or `docs/research/index/_per_source/` from tracked prose.
   A collaborator cloning the repo has neither directory.
 - Vendored **code** is the exception: it must be tracked to build, so it goes to
   `third_party/<name>/` with its LICENSE intact — never `_inspiration/`. Check copyleft

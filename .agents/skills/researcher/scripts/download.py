@@ -2,7 +2,7 @@
 """
 Download materials (no LLM)
 
-Reads _docs/research/downloads.yaml, downloads every status: pending entry into
+Reads docs/research/downloads.yaml, downloads every status: pending entry into
 _inspiration/, updates the yaml atomically as each completes. Per-kind dispatch
 to curl / git clone / wget; per-domain rate limiting; exponential backoff on
 failure; idempotent re-runs.
@@ -225,7 +225,7 @@ def ensure_gitignore(project_root: Path) -> None:
     `_inspiration/` gets a blanket `*` + `!.gitignore` — everything in it is
     someone else's work in full, so none of it is trackable.
 
-    `_docs/research/` gets `/*.md` + `!/.gitignore`, which quarantines ONLY the
+    `docs/research/` gets `/*.md` + `!/.gitignore`, which quarantines ONLY the
     raw research reports sitting directly in it. Those quote sources at length
     and are the least defensible thing in the tree to push. The leading `/`
     matters: a bare `*.md` would also swallow `index/*.md` one level down, and
@@ -239,7 +239,7 @@ def ensure_gitignore(project_root: Path) -> None:
     """
     stubs = {
         project_root / "_inspiration": "*\n!.gitignore\n",
-        project_root / "_docs" / "research": (
+        project_root / "docs" / "research": (
             "# Raw research reports quote sources at length — quarantined per\n"
             "# SOURCE-POLICY.md. The leading `/` scopes this to THIS directory:\n"
             "# index/ stays tracked (your summaries), as does downloads.yaml\n"
@@ -260,11 +260,11 @@ def main() -> int:
     p.add_argument("--project-root", type=Path, default=Path.cwd())
     p.add_argument("--workers", type=int, default=5)
     p.add_argument("--yaml", type=Path, default=None,
-                   help="Path to downloads.yaml (default: <project-root>/_docs/research/downloads.yaml)")
+                   help="Path to downloads.yaml (default: <project-root>/docs/research/downloads.yaml)")
     args = p.parse_args()
 
     project_root = args.project_root.resolve()
-    yaml_path = args.yaml or (project_root / "_docs" / "research" / "downloads.yaml")
+    yaml_path = args.yaml or (project_root / "docs" / "research" / "downloads.yaml")
     if not yaml_path.exists():
         print(f"Not found: {yaml_path}", file=sys.stderr)
         return 2

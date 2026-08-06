@@ -1,4 +1,4 @@
-# _docs/research/downloads.yaml
+# docs/research/downloads.yaml
 # Idempotent-upsert format. The `url` field is the unique key.
 # Each entry tracks a source's download state across re-runs.
 #

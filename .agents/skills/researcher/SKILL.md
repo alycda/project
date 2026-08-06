@@ -25,7 +25,7 @@ root for why they're the same rule.
 | Command | Does |
 |---|---|
 | `/researcher cite <url>` | **The common case.** One source: resolve license, archive it, append a `SOURCES.md` record. No pipeline. |
-| `/researcher research <question>` | Fan out parallel workers → `_docs/research/*.md` |
+| `/researcher research <question>` | Fan out parallel workers → `docs/research/*.md` |
 | `/researcher collect` | Build the manifest, then download → `_inspiration/` |
 | `/researcher index` | Semantic index + `SOURCES.md` (`--rebuild` to regenerate) |
 | `/researcher <question>` | All four, in order |
@@ -58,12 +58,12 @@ angles (theory / tooling / industry), each returning a Source ledger. Optional h
 Deep Research pass for breadth; optional dispatch to any research CLI on `PATH` if you
 want vendor diversity rather than perspective diversity.
 
-Outputs land in `_docs/research/*.md` and are **quarantined** — they quote at length.
+Outputs land in `docs/research/*.md` and are **quarantined** — they quote at length.
 
 ### 2 — Capture
 
 `references/capture.md`. A Haiku sub-agent reads the ledgers and builds
-`_docs/research/downloads.yaml`: dedupe, normalize, classify by `kind`, and record
+`docs/research/downloads.yaml`: dedupe, normalize, classify by `kind`, and record
 `license` / `flags` per entry.
 
 Licensing is captured here or not at all. Recovering it for 200 URLs a week later means
@@ -94,7 +94,7 @@ plus `SOURCES.md` at the project root, which is the only part a collaborator rec
 .
 ├── SOURCES.md                      # [TRACKED] the citation record
 ├── _inspiration/                   # [ignored] sources in full
-└── _docs/research/
+└── docs/research/
     ├── .gitignore                  # `/*.md` + `!/.gitignore`
     ├── theory.md · tooling.md · …  # [ignored] raw reports, quote-dense
     ├── downloads.yaml              # [TRACKED] capture record
@@ -107,8 +107,8 @@ an ignore rule — only paths carrying a stub are ignored.
 
 ## Pitfalls
 
-- **The `_` prefix is not an ignore rule.** `_docs/research/index/` and
-  `downloads.yaml` are tracked *by design*. Anything else dropped under `_docs/` is
+- **The `_` prefix is not an ignore rule.** `docs/research/index/` and
+  `downloads.yaml` are tracked *by design*. Anything else dropped under `docs/` is
   tracked too, including a PDF saved there by mistake.
 - **Licensing is captured at step 2 or not at all.** `LicenseRef-unknown` is an honest
   answer and costs nothing. A confident guess costs later.

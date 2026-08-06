@@ -33,29 +33,29 @@ want_tracked() {
 echo "Quarantine (must be ignored — these hold other people's work):"
 want_ignored "_inspiration/sample.pdf"                        "full-text captures"
 want_ignored "_inspiration/repos/owner/repo/README.md"        "cloned repos"
-want_ignored "_docs/research/index/_per_source/sample.md"     "per-source working notes"
+want_ignored "docs/research/index/_per_source/sample.md"     "per-source working notes"
 
 echo
 echo "Tracked (must NOT be ignored — these are your own work, or the record):"
 want_tracked "SOURCES.md"                                     "the artifact the policy produces"
 want_tracked "SOURCE-POLICY.md"
-want_tracked "_docs/research/index/README.md"                 "the semantic index"
-want_tracked "_docs/research/downloads.yaml"                  "the capture record"
+want_tracked "docs/research/index/README.md"                 "the semantic index"
+want_tracked "docs/research/downloads.yaml"                  "the capture record"
 
 echo
 echo "The claim that bit us — the '_' prefix is NOT an ignore rule:"
-want_tracked "_docs/notes.md"            "if this flips, the policy's wording is wrong"
-want_tracked "_docs/research/scratch.md" "…and an agent will trust it and commit a PDF"
+want_tracked "docs/notes.md"            "if this flips, the policy's wording is wrong"
+want_tracked "docs/research/scratch.md" "…and an agent will trust it and commit a PDF"
 
 # Raw research reports are quarantined only in projects that ran the researcher
-# skill, which writes _docs/research/.gitignore. Report, never fail, on a bare
+# skill, which writes docs/research/.gitignore. Report, never fail, on a bare
 # template — there is nothing to protect yet.
 echo
 echo "Research-report quarantine (present only after the researcher skill runs):"
-if [ -f _docs/research/.gitignore ]; then
-  want_ignored "_docs/research/claude-deep-research.md" "raw DR reports quote at length"
+if [ -f docs/research/.gitignore ]; then
+  want_ignored "docs/research/claude-deep-research.md" "raw DR reports quote at length"
 else
-  printf '  \033[33mskip\033[0m _docs/research/.gitignore absent — skill has not run here\n'
+  printf '  \033[33mskip\033[0m docs/research/.gitignore absent — skill has not run here\n'
 fi
 
 echo

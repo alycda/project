@@ -1,7 +1,7 @@
 # Research — fan-out
 
-Produces `_docs/research/*.md`, one file per perspective. These are **quarantined**
-(`_docs/research/.gitignore` ignores `/*.md`) because they quote sources at length.
+Produces `docs/research/*.md`, one file per perspective. These are **quarantined**
+(`docs/research/.gitignore` ignores `/*.md`) because they quote sources at length.
 What survives into history is `SOURCES.md`, built in `index.md`.
 
 ## Default: Claude, multi-perspective
@@ -11,9 +11,9 @@ they don't converge on the same first-page results:
 
 | Worker | Angle | Output |
 |---|---|---|
-| theory | Papers, formal results, why-it-works. Prefers arXiv/DOI, accepts older canon. | `_docs/research/theory.md` |
-| tooling | What exists and runs. Repos, docs, release health, maintenance signals. | `_docs/research/tooling.md` |
-| industry | Who shipped this, what broke. Postmortems, engineering blogs, conference talks. | `_docs/research/industry.md` |
+| theory | Papers, formal results, why-it-works. Prefers arXiv/DOI, accepts older canon. | `docs/research/theory.md` |
+| tooling | What exists and runs. Repos, docs, release health, maintenance signals. | `docs/research/tooling.md` |
+| industry | Who shipped this, what broke. Postmortems, engineering blogs, conference talks. | `docs/research/industry.md` |
 
 Perspective diversity is the point. One worker with three prompts finds the same
 sources three times; three workers with different evidentiary standards don't.
@@ -35,7 +35,7 @@ work. It is a **fourth pass**, not a replacement — run it when the long tail m
 and skip it when it doesn't.
 
 Paste the research question into Claude.ai Deep Research (and any other DR product you
-use), save what comes back to `_docs/research/<name>-deep-research.md`, and continue to
+use), save what comes back to `docs/research/<name>-deep-research.md`, and continue to
 `capture.md`. No template needed: DR products want a plain question, and the meta-prompt
 that used to live here mostly told the agent things it already does.
 
@@ -77,8 +77,8 @@ Run the Claude-only default, which stays in-session.
 
 ## Verification
 
-- One `_docs/research/*.md` per worker, each ending in a Source ledger
-- `git check-ignore -v _docs/research/theory.md` returns a match — the reports are
+- One `docs/research/*.md` per worker, each ending in a Source ledger
+- `git check-ignore -v docs/research/theory.md` returns a match — the reports are
   quarantined, not tracked
 - Ledgers contain URLs, not paraphrased citations ("the Raft paper" is not a source)
 - Provenance claims in prose carry their URL inline or are marked (unverified)
