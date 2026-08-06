@@ -1,6 +1,15 @@
 # project
 
-A starting template. The only thing established here is **version control hygiene** 
+A starting template. What's established here is **version control hygiene** — what belongs
+in history, and what must be ignored before it ever gets there. That covers generated
+files (the `.gitignore` below) and source material you didn't write
+([SOURCE-POLICY.md](./SOURCE-POLICY.md)). Both are the same rule with different stakes.
+
+```sh
+./scripts/check-sources.sh   # asserts the policy's claims about this repo are true
+```
+
+[MIT](./LICENSE) — fork it, strip what you don't want, keep the LICENSE file.
 
 ## Version control
 
@@ -34,8 +43,30 @@ There's no guarantee a project forked from this template uses [Jujutsu](https://
 
 So whether you adopt jj or not, having the `.gitignore` right *before* you start generating files is the cheapest intervention by orders of magnitude.
 
+### Source material you didn't write
+
+The same discipline, applied to the other thing that lands in a project tree uninvited: papers, saved articles, cloned repos, prior art. **[SOURCE-POLICY.md](./SOURCE-POLICY.md)** has the rules; the short version is that citing a source is not the same as being allowed to redistribute it.
+
+The model is the Zettelkasten: what goes in the box is a note in your own words with the reference attached, not the source. Hand-copying used to be expensive enough to enforce that by itself — copy-paste removed the cost and the thinking step along with it. The legally safe move and the better-notes move turn out to be the same one.
+
+So this template ships two directories that are ignored before anything has been put in them:
+
+| Path | Holds |
+| --- | --- |
+| `_inspiration/` | Full text of captured sources — local only, never pushed |
+| `docs/research/index/_per_source/` | Per-source working notes |
+
+Each carries a nested `.gitignore` stub (`*` + `!.gitignore`) that ignores the contents while keeping the directory trackable. **Those two paths are the quarantine — the `_` prefix is a naming convention, not an ignore rule**, so everything else under `docs/` is tracked. Tracked files get a *record* of a source — citation, archive link, access date, SPDX license identifier, your excerpts — rather than the source itself, unless it's public domain or open-licensed.
+
+Both directories are inert if you never capture third-party material; a fork that has no research workflow can delete them and ignore the policy.
+
+The ordering is the whole point, and it's the jj asymmetry above with sharper consequences: a downloaded PDF in the tree is committed by the next `jj` command you run, before you've decided anything about it.
+
 ### References
 
 - [jj working copy & `.gitignore` semantics](https://docs.jj-vcs.dev/latest/working-copy/) — auto-snapshot behavior, why pattern-before-generation matters
 - [jj-vcs/jj#5225](https://github.com/jj-vcs/jj/issues/5225) — `jj file untrack` requires the path to already be in `.gitignore`
 - [github/gitignore](https://github.com/github/gitignore) — upstream source for the macOS, Agents, and VS Code sections of this template's `.gitignore`
+- [source-policy-notes](https://gist.github.com/alycda/5b357ba4a13e479a0d635d3c35ef6dbc) — the reasoning behind SOURCE-POLICY.md: *Hachette*, fair-use limits, public-domain traps, license wrinkles, and the Zettelkasten argument in full. Kept outside the repo because case law dates and a fork can't update a copy.
+- [SPDX license identifiers](https://spdx.org/licenses/) and the [REUSE Specification](https://reuse.software/) — the existing conventions `SOURCES.md` records wrap, rather than reinventing
+- Sönke Ahrens, *How to Take Smart Notes* — the slip-box argument that elaboration, not collection, is where notes become useful
