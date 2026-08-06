@@ -1,4 +1,4 @@
-# Step 4 — Semantic Index
+# Indexing — Semantic Index
 
 Builds `_docs/research/index/` from `_inspiration/`.
 
@@ -8,7 +8,7 @@ Builds `_docs/research/index/` from `_inspiration/`.
 
 ## Procedure
 
-### 4.1 — Map: Per-Source Sub-Agents
+### 1 — Map: Per-Source Sub-Agents
 
 Spawn one sub-agent per top-level item in `_inspiration/` (each repo, each paper, each article). Each sub-agent reads its assigned material and produces a structured summary at `_docs/research/index/_per_source/<source-id>.md` containing:
 
@@ -23,7 +23,7 @@ Spawn one sub-agent per top-level item in `_inspiration/` (each repo, each paper
 
 **Write summaries, not transcriptions.** The per-source file is a *literature note*: the idea restated in your own words with the reference attached. That is what makes it useful later — an extract you did not process is an extract you cannot use — and it is also what keeps it publishable. Quote only what you are actually commenting on. If a summary could substitute for reading the source, it stopped being a summary.
 
-### 4.2 — Reduce: Cross-Source Aggregation
+### 2 — Reduce: Cross-Source Aggregation
 
 Once all per-source summaries exist, run aggregation (single sub-agent or inline) to produce:
 
@@ -37,11 +37,11 @@ Once all per-source summaries exist, run aggregation (single sub-agent or inline
 | `_docs/research/index/open-questions.md` | Things prior art doesn't answer; gaps where the project will have to invent |
 | `_docs/research/index/README.md` | Entry point for downstream agents; explains the index structure |
 
-### 4.3 — Surface Open Questions
+### 3 — Surface Open Questions
 
 Aggregate "things the prior art doesn't answer" across all sources. Write `_docs/research/index/open-questions.md`.
 
-### 4.4 — Emit `SOURCES.md`
+### 4 — Emit `SOURCES.md`
 
 Project root, tracked. This is the artifact that survives the quarantine: `_inspiration/` and `_per_source/` are both gitignored, so a collaborator who clones the repo gets neither. Without this step the entire research trail is invisible to everyone but the machine that ran it.
 
@@ -73,7 +73,7 @@ If `SOURCES.md` already exists, upsert by `url` and preserve hand-written excerp
 ## Inputs
 
 - `_inspiration/` (everything)
-- `_docs/research/<researcher-id>.md` (for high-level Top N hints from researchers)
+- `_docs/research/*.md` (worker reports, for Top-N hints)
 - `_docs/research/downloads.yaml` (for source-id → path mapping)
 
 ## Output

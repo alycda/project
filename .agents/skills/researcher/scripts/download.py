@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-# SPDX-License-Identifier: MIT
 """
-Step 3 - Download Materials (no LLM)
+Download materials (no LLM)
 
 Reads _docs/research/downloads.yaml, downloads every status: pending entry into
 _inspiration/, updates the yaml atomically as each completes. Per-kind dispatch
@@ -274,7 +273,7 @@ def main() -> int:
 
     data = yaml.safe_load(yaml_path.read_text()) or {"entries": []}
     pending = [e for e in data.get("entries", []) if e.get("status") == "pending"]
-    print(f"Step 3: {len(pending)} pending, {args.workers} workers, root={project_root}")
+    print(f"download: {len(pending)} pending, {args.workers} workers, root={project_root}")
     if not pending:
         return 0
 

@@ -2,10 +2,10 @@
 # Idempotent-upsert format. The `url` field is the unique key.
 # Each entry tracks a source's download state across re-runs.
 #
-# Step 2 produces this file (upsert: new URLs added as `pending`,
+# Capture produces this file (upsert: new URLs added as `pending`,
 #   existing entries' status/path/notes preserved).
-# Step 3 updates `status`, `path`, `accessed`, and `archived` as downloads complete.
-# Step 4 reads `license` and `flags` when emitting SOURCES.md records.
+# Download updates `status`, `path`, `accessed`, and `archived` as downloads complete.
+# Indexing reads `license` and `flags` when emitting SOURCES.md records.
 #
 # This file is TRACKED. It is the capture record — the thing SOURCE-POLICY.md
 # says belongs in history, as opposed to the captured material itself, which
@@ -44,7 +44,7 @@ entries:
   - url: https://arxiv.org/abs/2406.12345
     kind: paper
     title: "Some CRDT Paper"
-    cited_in: [claude, claude-deep-research]
+    cited_in: [theory, claude-deep-research]
     status: done       # pending | downloading | done | failed | skipped
     path: _inspiration/papers/2406.12345.pdf
     license: CC-BY-4.0
@@ -59,7 +59,7 @@ entries:
   - url: https://github.com/owner/repo
     kind: repo
     title: "Reference Implementation"
-    cited_in: [codex, gemini-deep-research]
+    cited_in: [tooling, claude-deep-research]
     status: pending
     path: null
     license: AGPL-3.0-or-later
@@ -74,7 +74,7 @@ entries:
   - url: https://example.com/blog/postmortem
     kind: article
     title: "ABI Breakage Postmortem"
-    cited_in: [claude]
+    cited_in: [industry]
     status: done
     path: _inspiration/articles/example-com-blog-postmortem/
     license: LicenseRef-all-rights-reserved
@@ -87,7 +87,7 @@ entries:
   - url: https://example.com/blog/gone
     kind: article
     title: "Deleted Postmortem"
-    cited_in: [gemini]
+    cited_in: [industry]
     status: failed
     path: null
     license: LicenseRef-unknown
@@ -101,7 +101,7 @@ entries:
   - url: https://docs.example.com/sdk/
     kind: docs
     title: "SDK Documentation"
-    cited_in: [gemini-deep-research]
+    cited_in: [claude-deep-research]
     status: skipped
     path: null
     license: LicenseRef-all-rights-reserved

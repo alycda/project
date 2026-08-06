@@ -1,193 +1,133 @@
 ---
 name: researcher
-description: Bootstraps a research-driven project end-to-end using StrongDM's Software Factory pattern. Generates a SEED.md, drafts a research brief, runs parallel deep-research sub-agents (Claude-only by default; multi-provider via sibling codex/gemini CLIs when --external is passed), augments with a required hosted Deep Research pass (Claude.ai / ChatGPT / Gemini browser DR), downloads materials, and builds a semantic index. Trigger when the user wants to start a new project that needs systematic prior-art collection — phrases like "prior art", "research brief", "set up factory", "seed and research", "compound engineering", "bootstrap a project", or any reference to the multi-step pipeline. Do NOT use for one-off questions, single web searches, or projects that already have _docs/research/index/ built.
-version: 0.9.0-claude
+description: Collect prior art and cite it properly. Fans out parallel research workers, captures each source with its license, archive snapshot, and access date, downloads material into a gitignored quarantine, and builds a semantic index plus a tracked SOURCES.md. Also handles the one-off case — "add a citation for this URL" — without running the pipeline. Trigger on "prior art", "research this", "cite this", "add a citation", "collect sources", "what's been written about", or a request to bootstrap a project's research trail. Do NOT use for a single factual lookup that needs no record.
+version: 1.0.0
 metadata:
-  tags: [research, factory, prior-art, seed, deep-research]
+  tags: [research, citation, prior-art, provenance, sources]
   category: research
 ---
 
 # Researcher
 
-A 5-step pipeline that bootstraps a research-driven project: **intent → seed → research brief → executed parallel research → downloaded materials → semantic index.**
+**The point is citations that hold up.** Everything else is in service of that.
 
-Built on the StrongDM Software Factory pattern: *Seed → Validation harness → Feedback loop. Tokens are the fuel.*
+A source you captured six months ago is worth nothing if you can't say where it came
+from, whether you were allowed to quote it, or what it said before the page changed.
+So provenance is captured at fetch time — the only moment it is cheap — and the thing
+that survives into version control is a record, not a mirror.
 
-This is the Claude-Code-native adaptation of the original Hermes researcher skill. Sub-agent orchestration uses the Agent tool; cross-provider diversity uses sibling `codex` and `gemini` CLIs invoked via Bash, matching the pattern used by `sprint-planner` / `sprint-retrospective` / `sprint-execute`.
+Third-party text stays quarantined. Your own work on it gets tracked. That split is
+both the copyright rule and the note-taking rule; see `SOURCE-POLICY.md` at the project
+root for why they're the same rule.
 
-## When to Use
+## Entry points
 
-Use this skill when:
+| Command | Does |
+|---|---|
+| `/researcher cite <url>` | **The common case.** One source: resolve license, archive it, append a `SOURCES.md` record. No pipeline. |
+| `/researcher research <question>` | Fan out parallel workers → `_docs/research/*.md` |
+| `/researcher collect` | Build the manifest, then download → `_inspiration/` |
+| `/researcher index` | Semantic index + `SOURCES.md` (`--rebuild` to regenerate) |
+| `/researcher <question>` | All four, in order |
 
-- Starting a new project that needs systematic prior-art collection
-- The user mentions "research brief", "prior art", "seed", "factory", "compound engineering", or "bootstrap a project"
-- The user wants to bootstrap a project the way the existing exemplar (see `references/exemplar-seed.md`) was bootstrapped
-- The user has a `SEED.md` and wants to drive it through to a built semantic index
+Run them independently. Sources arrive over weeks; every step is idempotent-upsert, so
+re-running after new material lands is normal and cheap.
 
-Do NOT use for:
+## `cite` — the fast path
 
-- One-off questions ("what is X?")
-- Single web searches
-- Code review or implementation tasks
-- Projects that already have `_docs/research/index/` complete (jump to whatever step is actually needed instead, or run a single `/researcher <step>` slash variant)
+Most citation work is one URL, not a research project. Do not spin up the pipeline for it.
 
-## Inputs
+1. Resolve the license — SPDX identifier, or `LicenseRef-all-rights-reserved` /
+   `LicenseRef-unknown`. Check the site's terms for a *grant* before defaulting;
+   Stack Exchange answers are `CC-BY-SA-4.0`, not unlicensed. See the heuristics table
+   in `capture.md`.
+2. Archive it: `https://web.archive.org/save/<url>`. Record the snapshot URL, or
+   `none  # save failed <date>, <reason>`.
+3. Append a record to `SOURCES.md` in the format `index.md` specifies — url, archived,
+   accessed, license, flags, plus the excerpt you actually care about and why.
 
-| Input | Source | Required? |
-|---|---|---|
-| Project intent | User (interactive Q&A in Step 0) | Yes, unless `SEED.md` already exists |
-| Seed exemplar | `references/exemplar-seed.md` | Built-in |
-| Research brief exemplar | `references/exemplar-research-brief.md` | Built-in |
-| StrongDM principles + techniques + products | `references/strongdm-*.md` | Built-in (refresh from web with `--refresh`) |
-| `codex` and `gemini` CLIs | Installed and authenticated on PATH | Required only for `--external` flag (Mode B). Setup: `references/cli-setup.md` |
-| Web search / fetch | Built-in `WebSearch` + `WebFetch` tools | Available automatically; no backend config needed |
-| Hosted Deep Research access | Claude.ai DR, ChatGPT DR, Gemini DR (browser apps via existing subscriptions) | Required for Step 1.6 unless `--skip-deep-research` is passed. No setup beyond having the accounts. |
+That's the whole path. Fetching the full text is optional and goes to `_inspiration/`
+if you do it.
 
-## Procedure
+## Pipeline
 
-### Step 0 — Seed (interactive)
+### 1 — Research
 
-Skip if `SEED.md`, `IDEA.md`, or `README.md` already exists at project root.
+`references/research.md`. Three parallel Claude workers with different evidentiary
+angles (theory / tooling / industry), each returning a Source ledger. Optional hosted
+Deep Research pass for breadth; optional dispatch to any research CLI on `PATH` if you
+want vendor diversity rather than perspective diversity.
 
-Otherwise follow `references/prompt-0-seed.md`:
+Outputs land in `_docs/research/*.md` and are **quarantined** — they quote at length.
 
-1. Confirm `references/strongdm-principles.md` is loaded (refresh from web if `--refresh` was passed).
-2. Probe the user across the four principle sections in order: Seed → Validation → Feedback → Apply More Tokens.
-3. Draft `SEED.md` section-by-section, showing each draft to the user before continuing.
-4. Surface 3–5 Open Questions; fold resolutions back in.
-5. Write `SEED.md` at project root.
+### 2 — Capture
 
-### Step 1 — Research Brief
+`references/capture.md`. A Haiku sub-agent reads the ledgers and builds
+`_docs/research/downloads.yaml`: dedupe, normalize, classify by `kind`, and record
+`license` / `flags` per entry.
 
-Read `references/prompt-1-research-brief.md`. Produce `RESEARCH-BRIEF.md` at project root, modeled on `references/exemplar-research-brief.md`.
+Licensing is captured here or not at all. Recovering it for 200 URLs a week later means
+reopening 200 tabs.
 
-**Important:** the brief is external-safe by default — internal ticket IDs, customer names, and incident IDs are stripped or generalized so it can be dispatched to non-Anthropic providers in Step 1.5 without leaking. If internal anchors must be preserved, the brief is marked `internal_only: true` and Step 1.5 will refuse `--external`.
+### 3 — Download
 
-### Step 1.5 — Execute Research
-
-Read `references/prompt-1.5-execute-research.md`. Two modes:
-
-- **Mode C (default, no flag)** — Claude-only multi-perspective. Three parallel Agent sub-agents on the parent's Claude model, each with a different perspective prompt (theory / tooling / industry). Outputs `_docs/research/{theory,tooling,industry}.md`. Safe — nothing leaves Claude.
-- **Mode B (`--external`)** — Cross-provider via sibling CLIs. Parent uses Bash to invoke `codex` and `gemini` CLIs in parallel alongside a Claude Agent worker. Outputs `_docs/research/{claude,codex,gemini}.md`. Requires `--external` flag AND explicit consent prompt confirmation.
-
-If Mode B is requested but `codex` or `gemini` is missing from PATH, fall back to Mode C and point the user at `references/cli-setup.md`.
-
-### Step 1.6 — Hosted Deep Research Augmentation
-
-Read `references/prompt-1.6-deep-research.md`. **Required** in the Claude harness; skip with `--skip-deep-research`.
-
-The skill renders `templates/web-prompt.md` against `RESEARCH-BRIEF.md` and writes `WEB-PROMPT.md` at the project root. The user pastes that prompt into Claude.ai Deep Research, ChatGPT Deep Research, and Gemini Deep Research browser apps (in parallel tabs while doing other work) and saves the returned reports to `_docs/research/{claude,chatgpt,gemini}-deep-research.md`. The skill waits for `continue` (or `skip`) before proceeding to Step 2.
-
-Why required: Claude Code's built-in `WebSearch` + `WebFetch` undershoots hosted Deep Research on breadth-of-citations tasks. Empirical comparison on a recent project found the Gemini CLI worker produced ~13% of its hosted DR counterpart's depth (8k bytes vs 63k bytes; 31 URLs vs 86). The Claude and Codex workers tracked their hosted counterparts more closely but still missed long-tail primary sources. Step 1.6 is positioned as a fourth pass on top of Step 1.5's three inline workers — not a replacement.
-
-### Step 2 — Download Manifest
-
-Read `references/prompt-2-download-manifest.md`. Dispatch to an Agent sub-agent with `model: "haiku"` — Step 2 is structured extraction (URL detection / normalization / classification), and Haiku handles it at a fraction of the Opus/Sonnet cost with no quality regression. The sub-agent produces `_docs/research/downloads.yaml` (idempotent-upsert format; see `templates/downloads.yaml.example`).
-
-### Step 3 — Download
-
-Read `references/prompt-3-download.md`. Invoke `scripts/download.py` via Bash to download all `pending` entries into `_inspiration/`. The script handles per-domain rate limits, atomic yaml updates via `flock`, exponential-backoff retries, and idempotent re-runs. **No LLM dispatch** — downloads are mechanical (`curl` / `git clone` / `wget`) and `kind` is already decided by Step 2.
+`references/download.md`. `scripts/download.py` fetches every `pending` entry into
+`_inspiration/`. Mechanical — no LLM dispatch. Handles rate limits, retries, atomic
+yaml updates, and creates the two gitignore stubs.
 
 ```bash
 python3 ~/.claude/skills/researcher/scripts/download.py --project-root "$PROJECT_ROOT" --workers 5
 ```
 
-Surfaces `status: failed` entries at the end for manual triage. Don't auto-retry via Agents — failed entries usually mean paywalled, deleted, or auth-gated content and need the user's judgment.
+A successful download is not permission to commit. `status: done` means the bytes are
+on disk; `license` decides what may enter history.
 
-### Step 4 — Semantic Index
+### 4 — Index
 
-Read `references/prompt-4-semantic-index.md`. Build `_docs/research/index/` using MapReduce-style Agent sub-agents (one per source for the Map phase; single agent or inline for the Reduce phase), then emit `SOURCES.md` at the project root (Step 4.4).
+`references/index.md`. MapReduce sub-agents summarize each source, then aggregate into
+`by-topic`, `by-tag`, `clusters`, `top-N`, `cross-references`, and `open-questions` —
+plus `SOURCES.md` at the project root, which is the only part a collaborator receives.
 
-`SOURCES.md` is not optional bookkeeping: `_inspiration/` and `_per_source/` are both gitignored, so it is the only part of the research trail a collaborator who clones the repo actually receives. It carries one record per downloaded source — citation, archive link, access date, SPDX license, excerpts — plus a pre-publication checklist of every entry flagged `noncommercial-only`, `sharealike-integrated`, or `status-unverified`.
-
-## Pitfalls
-
-- **Cold-start overconfidence.** First runs cannot rely on cross-session memory. Spend more time on Step 0 probe questions than feels natural.
-- **Mode B without consent.** The `--external` flag does not bypass the consent prompt. Briefs naturally contain sensitive info; the phrase-confirmation gate exists because of that. Don't auto-confirm.
-- **Per-call model override is per-Agent-call.** The Agent tool's `model:` parameter is how Step 2 routes to Haiku without leaving Claude. Mode C uses the default (parent's model). Mode B uses external CLIs for actual vendor diversity — that's why Mode B exists.
-- **Brief-quality bottleneck.** Steps 2–4 only produce useful output if the Step 1 brief was high-quality. Vague brief → mediocre prior art across all researchers regardless of mode.
-- **Token budget at Step 4.** Don't read all of `_inspiration/` into a single context. MapReduce sub-agents are mandatory; serial reads will OOM.
-- **Nested gitignore stubs.** Step 3 creates two, idempotently: `_inspiration/.gitignore` (`*` + `!.gitignore`) and `_docs/research/.gitignore` (`/*.md` + `!/.gitignore`). Failure to gitignore commits gigabytes of cloned repos and PDFs — and, worse, the raw research reports, which are the most quote-dense files in the tree.
-- **The `_` prefix is not an ignore rule.** Only paths carrying a stub are ignored. `_docs/research/index/` and `_docs/research/downloads.yaml` are *tracked by design* — they are your summaries and your capture record. Anything else you drop under `_docs/` is tracked too, including a PDF saved there by mistake. `git check-ignore -v <path>` before writing captures anywhere new.
-- **Licensing is captured at Step 2 or not at all.** Recovering license status for 200 URLs after the fact means reopening 200 tabs. Step 2 records an SPDX identifier per entry while the URL is in hand; `LicenseRef-unknown` is an honest value and costs nothing. A downloaded file is not a committable file — `status: done` means the bytes are on disk, and the `license` field is what decides whether the text may enter history. See the project's `SOURCE-POLICY.md`.
-- **`SOURCES.md` is the only research artifact a collaborator actually receives.** `_inspiration/` and `_per_source/` are both ignored, so a clone gets neither. Skipping Step 4.4 leaves the entire research trail invisible to everyone but the machine that ran the pipeline.
-- **Skipping Step 1.6 silently.** Step 1.6 (hosted Deep Research augmentation) is *required*, not optional, in the Claude harness — `WebSearch` + `WebFetch` alone undershoots hosted DR on breadth-of-citations tasks (especially Gemini-style). The `--skip-deep-research` escape hatch exists for quick iterative reruns, but the skill must always warn loudly when skipping. Don't let it become a silent default.
-- **Arxiv ID hallucination in Step 1.6.** Hosted Deep Research occasionally invents plausible arXiv IDs that don't resolve. Step 3's download phase will fail loudly on 404 — that's the natural check. Flag arxiv IDs dated after the current month as suspicious in `cited_in` notes.
-- **CLI not on PATH.** Mode B requires `codex` and `gemini` reachable from the shell. If either is missing, fall back to Mode C and tell the user — don't silently run with two workers.
-- **`internal_only: true` and external dispatch.** If the brief was authored with internal anchors preserved, Step 1.5 must refuse `--external` outright AND Step 1.6 must refuse to emit `WEB-PROMPT.md`. Surface the conflict and ask whether the user wants to author a sanitized version or run Mode C with `--skip-deep-research`.
-
-## Verification
-
-After Step 4, the project root should contain:
+## Layout
 
 ```
 .
-├── SEED.md                          # from Step 0
-├── RESEARCH-BRIEF.md                # from Step 1
-├── WEB-PROMPT.md                    # from Step 1.6 (unless --skip-deep-research)
-├── SOURCES.md                       # from Step 4.4  [TRACKED — the shareable record]
-├── _inspiration/
-│   ├── .gitignore                   # stub: `*` + `!.gitignore`
-│   └── ...                          # downloaded materials          [ignored]
-└── _docs/
-    └── research/
-        ├── .gitignore               # stub: `/*.md` + `!/.gitignore`
-        ├── claude.md (Mode B) or theory.md (Mode C)     # Step 1.5   [ignored]
-        ├── codex.md  (Mode B) or tooling.md (Mode C)    # Step 1.5   [ignored]
-        ├── gemini.md (Mode B) or industry.md (Mode C)   # Step 1.5   [ignored]
-        ├── claude-deep-research.md                      # Step 1.6   [ignored]
-        ├── chatgpt-deep-research.md                     # Step 1.6   [ignored]
-        ├── gemini-deep-research.md                      # Step 1.6   [ignored]
-        ├── downloads.yaml           # from Step 2       [TRACKED — capture record]
-        └── index/                   # from Step 4       [TRACKED — your summaries]
-            ├── README.md
-            ├── by-topic.md
-            ├── by-tag.md
-            ├── clusters.md
-            ├── top-N.md
-            ├── cross-references.md
-            ├── open-questions.md
-            └── _per_source/
-                └── .gitignore       # stub: `*` + `!.gitignore`     [ignored]
+├── SOURCES.md                      # [TRACKED] the citation record
+├── _inspiration/                   # [ignored] sources in full
+└── _docs/research/
+    ├── .gitignore                  # `/*.md` + `!/.gitignore`
+    ├── theory.md · tooling.md · …  # [ignored] raw reports, quote-dense
+    ├── downloads.yaml              # [TRACKED] capture record
+    └── index/                      # [TRACKED] your summaries
+        └── _per_source/            # [ignored] working notes
 ```
 
-**What is tracked and why.** Third-party text is quarantined; your own work on it is
-tracked. `_inspiration/` (sources in full) and the raw `_docs/research/*.md` reports
-(which quote at length) stay local. `downloads.yaml`, the semantic index, and
-`SOURCES.md` are records and summaries — they are the artifacts a collaborator needs
-and the ones safe to push. Verify with `git check-ignore -v <path>`; do not infer
-tracking from the `_` prefix, which is a naming convention, not an ignore rule.
+Verify with `git check-ignore -v <path>`. The `_` prefix is a naming convention, **not**
+an ignore rule — only paths carrying a stub are ignored.
 
-A successful run means a downstream non-interactive coding agent (Attractor, Fabro, Kilroy, or equivalent) can be pointed at this directory and start producing code. This skill is **tool-agnostic** — it produces the artifacts; downstream agents consume them.
+## Pitfalls
 
-## Slash Command Behavior
-
-| Command | Behavior |
-|---|---|
-| `/researcher` | Start the pipeline; if `SEED.md` exists, ask whether to skip Step 0. Default Mode C for Step 1.5; Step 1.6 required. |
-| `/researcher --refresh` | Refresh cached StrongDM principles before Step 0 |
-| `/researcher --external` | Use Mode B for Step 1.5 (cross-provider via codex+gemini CLIs). Requires consent prompt. Step 1.6 still required. |
-| `/researcher --skip-deep-research` | Skip Step 1.6 (hosted DR augmentation). Warns about reduced output quality, especially on breadth-of-citations tasks. |
-| `/researcher seed` | Step 0 only |
-| `/researcher brief` | Step 1 only (assumes SEED.md exists) |
-| `/researcher research` | Step 1.5 only — Mode C |
-| `/researcher research --external` | Step 1.5 only — Mode B |
-| `/researcher web-prompt` | Step 1.6 only — emit `WEB-PROMPT.md` and wait for hosted DR outputs |
-| `/researcher manifest` | Step 2 only |
-| `/researcher download` | Step 3 only |
-| `/researcher index` | Step 4 only |
-| `/researcher index --rebuild` | Step 4, regenerating from scratch |
-
-## First-Time Setup (Mode B Only)
-
-Mode B requires `codex` and `gemini` CLIs installed and authenticated. See `references/cli-setup.md`. Mode C requires no setup — the Agent tool is built into Claude Code.
+- **The `_` prefix is not an ignore rule.** `_docs/research/index/` and
+  `downloads.yaml` are tracked *by design*. Anything else dropped under `_docs/` is
+  tracked too, including a PDF saved there by mistake.
+- **Licensing is captured at step 2 or not at all.** `LicenseRef-unknown` is an honest
+  answer and costs nothing. A confident guess costs later.
+- **`SOURCES.md` is the only research artifact a collaborator receives.** `_inspiration/`
+  and `_per_source/` are both ignored. Skip step 4 and the trail is invisible to
+  everyone but the machine that ran it.
+- **Don't read all of `_inspiration/` into one context.** MapReduce sub-agents are
+  mandatory at step 4; serial reads will OOM.
+- **Density-score inflation.** If every source scores 4–5 the score is useless. Force a
+  distribution — max 20% can be a 5.
+- **Hallucinated cross-references.** Workers invent citations between papers that don't
+  cite each other. Verify against actual content before it lands in the index.
+- **Fan-out is for diversity, not volume.** Three workers agreeing is signal; six
+  workers agreeing is the same signal, slower and more expensive.
+- **Anything dispatched outside this session leaves permanently.** Strip ticket IDs,
+  incident IDs, customer names, and internal paths first — see `research.md`.
 
 ## Related
 
-- StrongDM Software Factory: https://factory.strongdm.ai/
-- Original Hermes researcher skill (this one's ancestor): `~/.hermes/skills/research/researcher/`
-- Sibling CLI orchestration pattern: `~/.claude/skills/sprint-planner/SKILL.md`
-- Compound Engineering brainstorm/seed plugin (TBD — investigate as alternative to Step 0)
-- Attractor: https://github.com/strongdm/attractor (downstream consumer of the artifacts produced)
-- Fabro: https://fabro.sh/ (Attractor implementation)
-- Kilroy: https://github.com/danshapiro/kilroy (Attractor implementation)
+- `SOURCE-POLICY.md` (project root) — what may enter history, and why
+- [SPDX identifiers](https://spdx.org/licenses/) · [REUSE](https://reuse.software/) —
+  the conventions `downloads.yaml` and `SOURCES.md` wrap
