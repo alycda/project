@@ -93,6 +93,14 @@ too long, *and* taking the qualitative heart of a work can fail at a few hundred
 — shorten or paraphrase when a source is unpublished or the passage is its central
 claim. Fair use is a fact-specific defense, not a permission.
 
+Both limits are per-excerpt, and **short works need a third: a running budget.** When
+the whole work is a few hundred words, a quarter of it can be assembled one
+individually-defensible excerpt at a time across different files. Track the total in
+the source's record — count distinct words of the source quoted anywhere in tracked
+files (re-quoting an already-tracked line adds nothing) — and judge the next excerpt
+against that denominator, not in isolation. A fourth quote from a 230-word work is a
+different act from a first.
+
 ## Source records
 
 `SOURCES.md` at the repo root. Past ~30 entries, split into `docs/sources/<slug>.md`
@@ -137,16 +145,25 @@ At capture time — not later, when the tab is closed and the license footer is 
 
 1. **Determine status.** PD, open license (which SPDX id), or all rights reserved.
    Check ToS for a grant first. Record `LicenseRef-unknown` rather than guessing.
-2. **Archive it.** `https://web.archive.org/save/<url>` (archive.today is manual-only,
-   CAPTCHA-gated). If no snapshot is possible, record
-   `archived: none  # save failed YYYY-MM-DD, <reason>` — never omit the field. This
-   relocates the copy to a third party rather than eliminating it.
+2. **Archive it.** Check for an existing snapshot first —
+   `https://archive.org/wayback/available?url=<url>` — before attempting a save. An
+   old capture satisfies this step, and the availability query is one request; a save
+   is rate-limited and can 429 for days while a usable snapshot sits there the whole
+   time. If none exists, save via `https://web.archive.org/save/<url>` (archive.today
+   is manual-only, CAPTCHA-gated). The two ways to end up without a snapshot are
+   different records — never omit the field:
+   - `archived: none  # no snapshot exists (checked YYYY-MM-DD)` — availability
+     checked and save failed. A finding.
+   - `archived: none  # save failed YYYY-MM-DD, <reason>; availability not checked` —
+     a retry hint, not a conclusion.
+   Archiving relocates the copy to a third party rather than eliminating it.
 3. **Record the access date.** ISO 8601.
 4. **Fetch into the quarantine, never the repo root.** The command itself must target
    it: `curl -o _inspiration/<slug>/<file>`, `git clone <url> _inspiration/repos/<name>`.
    A bare `curl -O` lands in a tracked path and jj commits it on the next command.
    Required for load-bearing sources (step 6 hashes this copy).
-5. **Excerpt into the record**, within both limits above.
+5. **Excerpt into the record**, within the limits above — including the running
+   budget for short works.
 6. **Hash load-bearing sources.** `shasum -a 256 <file>`. Proves your copy is unchanged
    since you hashed it; the archive snapshot carries the third-party timestamp.
 
