@@ -36,16 +36,20 @@ So whether you adopt jj or not, having the `.gitignore` right *before* you start
 
 ### Source material you didn't write
 
-The same discipline, applied to the other thing that lands in a project tree uninvited: papers, saved articles, cloned repos, prior art. **[SOURCE-POLICY.md](./SOURCE-POLICY.md)** has the rules; the short version is that citing a source is not the same as being allowed to redistribute it, and a commit is a publication event.
+The same discipline, applied to the other thing that lands in a project tree uninvited: papers, saved articles, cloned repos, prior art. **[SOURCE-POLICY.md](./SOURCE-POLICY.md)** has the rules; the short version is that citing a source is not the same as being allowed to redistribute it.
 
-That's why this template ships two directories that are ignored before anything has been put in them:
+The model is the Zettelkasten: what goes in the box is a note in your own words with the reference attached, not the source. Hand-copying used to be expensive enough to enforce that by itself — copy-paste removed the cost and the thinking step along with it. The legally safe move and the better-notes move turn out to be the same one.
+
+So this template ships two directories that are ignored before anything has been put in them:
 
 | Path | Holds |
 | --- | --- |
 | `_inspiration/` | Full text of captured sources — local only, never pushed |
 | `_docs/research/index/_per_source/` | Per-source working notes |
 
-Each carries a nested `.gitignore` stub (`*` + `!.gitignore`) that ignores the contents while keeping the directory trackable. Tracked files get a *record* of a source — citation, archive link, access date, license status, your excerpts — rather than the source itself, unless it's public domain or open-licensed.
+Each carries a nested `.gitignore` stub (`*` + `!.gitignore`) that ignores the contents while keeping the directory trackable. **Those two paths are the quarantine — the `_` prefix is a naming convention, not an ignore rule**, so everything else under `_docs/` is tracked. Tracked files get a *record* of a source — citation, archive link, access date, SPDX license identifier, your excerpts — rather than the source itself, unless it's public domain or open-licensed.
+
+Both directories are inert if you never capture third-party material; a fork that has no research workflow can delete them and ignore the policy.
 
 The ordering is the whole point, and it's the jj asymmetry above with sharper consequences: a downloaded PDF in the tree is committed by the next `jj` command you run, before you've decided anything about it.
 
@@ -56,3 +60,5 @@ The ordering is the whole point, and it's the jj asymmetry above with sharper co
 - [github/gitignore](https://github.com/github/gitignore) — upstream source for the macOS, Agents, and VS Code sections of this template's `.gitignore`
 - [17 U.S.C. § 106](https://www.law.cornell.edu/uscode/text/17/106) / [§ 107](https://www.law.cornell.edu/uscode/text/17/107) / [§ 105](https://www.law.cornell.edu/uscode/text/17/105) — exclusive rights, fair use, and the US federal government exclusion
 - [*Hachette Book Group v. Internet Archive*](https://www.courtlistener.com/opinion/10104144/hachette-book-group-inc-v-internet-archive/) (2d Cir. 2024) — why "I'm keeping a copy in case it disappears" is not a fair use argument
+- [SPDX license identifiers](https://spdx.org/licenses/) and the [REUSE Specification](https://reuse.software/) — the existing conventions `SOURCES.md` records wrap, rather than reinventing
+- Sönke Ahrens, *How to Take Smart Notes* — the slip-box argument that elaboration, not collection, is where notes become useful

@@ -29,13 +29,26 @@ The three things that get this wrong most often:
 
 Operationally:
 
-- Full text of a source goes under `_inspiration/` (gitignored — local only).
+- **Only two paths are quarantined**: `_inspiration/` and
+  `_docs/research/index/_per_source/`, each via a nested `.gitignore` stub. The `_`
+  prefix is a naming convention, **not** an ignore rule — everything else under
+  `_docs/` is tracked and will be pushed. Run `git check-ignore -v <path>` before
+  writing a capture anywhere new; do not infer from the underscore.
+- Point the fetch itself at the quarantine (`curl -o _inspiration/...`,
+  `git clone <url> _inspiration/repos/<name>`). A bare `curl -O` from the repo root
+  lands in a tracked path, and under jj the next command commits it.
 - Tracked files get a **record**, not the work: citation, canonical URL, archive link,
-  access date, license status, and your own excerpts. Format in SOURCE-POLICY.md.
+  access date, SPDX license identifier, and your own excerpts. Records live in
+  `SOURCES.md` at the repo root. Format in SOURCE-POLICY.md.
 - Commit a source in full only when it is public domain or open-licensed, and record
-  which, in the file itself, so the next reader knows why it is there.
-- Never write into `_inspiration/` and then reference it from tracked prose. A
-  collaborator cloning the repo does not have that directory.
+  which, in the file itself, so the next reader knows why it is there. Check the site's
+  terms of service for a *grant* before recording something as all-rights-reserved —
+  Stack Exchange answers, for instance, are `CC-BY-SA-4.0`.
+- Never cite `_inspiration/` or `_docs/research/index/_per_source/` from tracked prose.
+  A collaborator cloning the repo has neither directory.
+- Vendored **code** is the exception: it must be tracked to build, so it goes to
+  `third_party/<name>/` with its LICENSE intact — never `_inspiration/`. Check copyleft
+  (`GPL`/`AGPL`/`LGPL`/`MPL`) compatibility against the repo's own license first.
 
 If you are adding tooling that downloads sources in bulk, the automated-downloading
 section of SOURCE-POLICY.md is the checklist it has to satisfy.
