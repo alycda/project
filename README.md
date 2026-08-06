@@ -1,6 +1,13 @@
 # project
 
-A starting template. The only thing established here is **version control hygiene** 
+A starting template. What's established here is **version control hygiene** — what belongs
+in history, and what must be ignored before it ever gets there. That covers generated
+files (the `.gitignore` below) and source material you didn't write
+([SOURCE-POLICY.md](./SOURCE-POLICY.md)). Both are the same rule with different stakes.
+
+```sh
+./scripts/check-sources.sh   # asserts the policy's claims about this repo are true
+```
 
 ## Version control
 

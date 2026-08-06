@@ -50,6 +50,11 @@ Operationally:
   `third_party/<name>/` with its LICENSE intact — never `_inspiration/`. Check copyleft
   (`GPL`/`AGPL`/`LGPL`/`MPL`) compatibility against the repo's own license first.
 
+**Verify, don't recite.** `./scripts/check-sources.sh` asserts that the quarantine paths
+are actually ignored and the tracked ones actually aren't. Run it after touching any
+`.gitignore`, and after adding a capture directory. It exists because the prose version of
+this claim was wrong once, and prose cannot check itself.
+
 If you are adding tooling that downloads sources in bulk, the automated-downloading
 section of SOURCE-POLICY.md is the checklist it has to satisfy.
 
