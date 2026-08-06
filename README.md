@@ -9,6 +9,8 @@ files (the `.gitignore` below) and source material you didn't write
 ./scripts/check-sources.sh   # asserts the policy's claims about this repo are true
 ```
 
+[MIT](./LICENSE) — fork it, strip what you don't want, keep the LICENSE file.
+
 ## Version control
 
 ### `.gitignore` structure

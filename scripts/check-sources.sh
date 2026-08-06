@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
 # Assert that SOURCE-POLICY.md's factual claims about this repo are true.
 #
 # The policy's central claim is which paths are quarantined. That claim was wrong
@@ -55,6 +56,15 @@ if [ -f _docs/research/.gitignore ]; then
   want_ignored "_docs/research/claude-deep-research.md" "raw DR reports quote at length"
 else
   printf '  \033[33mskip\033[0m _docs/research/.gitignore absent — skill has not run here\n'
+fi
+
+echo
+echo "This repo's own license (the policy applies to us too):"
+if [ -f LICENSE ]; then
+  pass "LICENSE present — forks get an explicit grant"
+else
+  bad "no LICENSE — by this policy's own rule this repo is all-rights-reserved,"
+  bad "  so nobody who forks it may redistribute what they forked"
 fi
 
 echo

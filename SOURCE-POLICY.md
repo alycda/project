@@ -23,6 +23,12 @@ safe move and the useful move are the same move.
 
 Verify, don't recite: `./scripts/check-sources.sh`.
 
+This repo takes its own medicine: it is [MIT](./LICENSE) licensed, `SPDX-License-Identifier: MIT`,
+so a fork inherits an explicit grant rather than the all-rights-reserved default this
+policy warns about. A policy telling you to record license status, in a repo with no
+license, would be the exact defect it teaches you to spot. `check-sources.sh` asserts
+the LICENSE is still there.
+
 ## The two rules everything else follows from
 
 **1. Attribution is not permission.** Crediting an author cures plagiarism. It does
