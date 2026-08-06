@@ -5,19 +5,6 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [1.0.0] — 2026-08-06
 
-First version under its own identity. Earlier history is not carried forward: it
-documented a fork from Hermes, a tool no longer in use, and a `-claude` suffix that
-marked a distinction from nothing once the other line stopped existing. A changelog
-whose versioning premise has evaporated is noise, so it starts here.
-
-### The skill is about citations now
-
-Previously: "bootstraps a research-driven project end-to-end using the Software Factory
-pattern." That framing carried three jobs at once and the seams showed. The keeper is
-**collect prior art and cite it properly** — everything retained serves that, and
-everything cut belonged to one of the other two jobs.
-
-2,144 lines across 19 files → ~1,000 across 9.
 
 ### Added
 - **`/researcher cite <url>`** — the one-off path, which is the most common real use and
@@ -62,7 +49,3 @@ everything cut belonged to one of the other two jobs.
   incident IDs don't end up in a third party's logs — worth ~15 lines even with the
   default staying in-session.
 
-### Migration
-Existing projects need nothing. Paths, `downloads.yaml` schema, and the gitignore stubs
-are unchanged; only the skill's own files moved. `SEED.md` and `RESEARCH-BRIEF.md`
-already generated remain valid inputs — the skill just no longer generates them.
