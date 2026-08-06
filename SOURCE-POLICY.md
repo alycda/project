@@ -101,7 +101,8 @@ Three consequences to keep straight:
 
 Records live in `SOURCES.md` at the repo root. Once it passes roughly 30 entries,
 split it into `docs/sources/<slug>.md` — one record per file — and reduce `SOURCES.md`
-to an index of links. One store, one format; two agents capturing into the same repo
+to an index of links. (`docs/`, not `_docs/`: records are tracked by design. The
+underscore marks directories that carry an ignore stub, and this one must not.) One store, one format; two agents capturing into the same repo
 must not build two.
 
 ```markdown
@@ -131,7 +132,15 @@ wrapper over conventions that have tooling, not a new standard.
 `LicenseRef-unknown` is a valid, honest value. It is handled as all-rights-reserved
 and is a prompt to check before the repo goes public — not a blocker on capture.
 
-`flags:` exists so the pre-launch sweep is a grep, not a re-read: `noncommercial-only`
+**Load-bearing** means: if this source turned out to say something different, a decision in the repo would change. Those get `sha256:`; everything else does not.
+
+The pre-publication sweep is one command, not a re-read:
+
+```sh
+rg -n 'noncommercial-only|sharealike-integrated|status-unverified' SOURCES.md docs/sources/ 2>/dev/null
+```
+
+Run it before making a repo public and before any commercial use. `flags:` values: `noncommercial-only`
 for BY-NC, `sharealike-integrated` for a BY-SA source woven into your own prose,
 `status-unverified` when you recorded a license you did not confirm at the source.
 
@@ -140,8 +149,8 @@ for BY-NC, `sharealike-integrated` for a BY-SA source woven into your own prose,
 | Category | Test | Notes |
 | --- | --- | --- |
 | US federal government works | Authored by a **federal employee** in the course of their duties | [17 U.S.C. § 105](https://www.law.cornell.edu/uscode/text/17/105) — no copyright at all. Does **not** extend to contractor-authored works. § 105 bars *originally federal* authorship only — the government can hold copyrights assigned to it. A `.gov` domain is not evidence of federal authorship. |
-| Public domain by age | **Textual/visual works published in the US** 1930 or earlier (as of 2026; the window advances every 1 January) | Excludes **sound recordings** — pre-1972 recordings run 95 years plus a transition period under the Music Modernization Act, so a 1930 recording is protected until 2031. Excludes **unpublished** works (letters, manuscripts, archival photos) — those run life+70, or 120 years from creation, regardless of age. New editions, translations, and restorations carry their own fresh copyright. |
-| Government edicts | Authored by a **judge or legislature acting in official capacity** — statutes, judicial opinions, legislature-authored annotations | *Georgia v. Public.Resource.Org* (2020). The doctrine turns on **who authored** the text, not on whether it has legal force. Privately authored standards incorporated by reference into regulation (building codes, ASTM/NFPA) remain copyrighted — *ASTM v. Public.Resource.Org* (D.C. Cir. 2023) resolved public access on fair use, not on loss of copyright. Treat non-federal agency regulations as unresolved. |
+| Public domain by age | **Textual/visual works published in the US** more than **95 years ago** — compute it, do not read a year off this page (1930 or earlier during 2026; the window advances every 1 January) | Excludes **sound recordings** — pre-1972 recordings run 95 years plus a transition period under the Music Modernization Act, so a 1930 recording is protected until 2031. Excludes **unpublished** works (letters, manuscripts, archival photos) — those run life+70, or 120 years from creation, regardless of age. New editions, translations, and restorations carry their own fresh copyright. |
+| Government edicts | Authored by a **judge or legislature acting in official capacity** — statutes, judicial opinions, legislature-authored annotations | *Georgia v. Public.Resource.Org* (2020). The doctrine turns on **who authored** the text, not on whether it has legal force. Privately authored standards incorporated by reference into regulation (building codes, ASTM/NFPA) remain copyrighted — *ASTM v. Public.Resource.Org* (D.C. Cir. 2023) resolved public access on fair use, not on loss of copyright. Treat non-federal agency regulations as `LicenseRef-unknown`, which this policy handles as all-rights-reserved — a policy's job is to supply the default under uncertainty. |
 | Open-licensed | `CC-BY`, `CC-BY-SA`, `CC-BY-ND`, `CC0`, or an OSI license — plus `CC-BY-NC` **for non-commercial repos only** | Verbatim redistribution is what these grant. Keep the attribution and license notice **with** the copy. Read the wrinkles below before relying on one. |
 
 Open-license wrinkles worth reading before relying on one:
@@ -288,17 +297,12 @@ conventions**, and this policy borrows rather than invents:
 | [SPDX identifiers](https://spdx.org/licenses/) | Naming a license unambiguously | **Yes** — the `license:` field |
 | [REUSE Specification](https://reuse.software/) | Per-file license declaration, with a linter | Compatible by design; adopt `reuse lint` if the repo grows into it |
 | Debian `debian/copyright` | Machine-readable per-source copyright for a whole package | Format is heavier than a template needs; the per-source-record idea is taken from it |
-| `third_party/` + `THIRD_PARTY_NOTICES` | Vendored code with obligations intact | **Yes** — the `third_party/<name>/` row |
+| `third_party/` layout | Vendored code with obligations intact | **Yes** — the `third_party/<name>/` row. `THIRD_PARTY_NOTICES` aggregation is *not* adopted: with per-source records in `SOURCES.md` it would be a second place to forget to update. Add one if you ship binaries whose licenses require notice redistribution. |
 
-**The research-agent tools, by contrast, have nothing to inherit — structurally.**
-Surveyed 2026-08-06: [gpt-researcher](https://github.com/assafelovic/gpt-researcher)
-(Apache-2.0), [STORM](https://github.com/stanford-oval/storm) (MIT),
-[open_deep_research](https://github.com/langchain-ai/open_deep_research) (MIT),
-[doxa-research](https://github.com/smorinlabs/doxa-research) (AGPL-3.0). Every one
-licenses its own code and says nothing about the material it collects — because they
-are retrieval libraries that hand you results and never commit them. The question of
-what may then be *committed* falls outside their scope and lands on whoever runs them.
-That is this repository.
+The research-agent tools (gpt-researcher, STORM, open_deep_research, doxa-research)
+were surveyed first and are *not* cited as evidence here: they are retrieval libraries
+that never commit what they fetch, so their silence on the question proves nothing
+either way. The conventions above stand on their own.
 
 ## Non-US sources and non-US forkers
 
