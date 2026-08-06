@@ -9,7 +9,7 @@ Downloads are `curl` / `git clone` / `wget` — no judgment, just dispatch — s
 ## Dispatch
 
 ```bash
-python3 ~/.claude/skills/researcher/scripts/download.py \
+python3 "$PROJECT_ROOT/.agents/skills/researcher/scripts/download.py" \
   --project-root "$PROJECT_ROOT" \
   --workers 5
 ```

@@ -141,6 +141,7 @@ self_destruct() {
   # Remove the entire setup skill and try to remove the .agents tree if empty.
   echo "Removing one-time bootstrap skill at $SKILL_DIR"
   rm -rf "$SKILL_DIR"
+  rm -f "$PROJECT_ROOT/.claude/skills/setup"            # per-skill symlink, else it dangles
   rmdir "$(dirname "$SKILL_DIR")" 2>/dev/null || true   # .agents/skills if empty
   rmdir "$(dirname "$(dirname "$SKILL_DIR")")" 2>/dev/null || true  # .agents if empty
 }

@@ -76,7 +76,7 @@ reopening 200 tabs.
 yaml updates, and creates the two gitignore stubs.
 
 ```bash
-python3 ~/.claude/skills/researcher/scripts/download.py --project-root "$PROJECT_ROOT" --workers 5
+python3 "$PROJECT_ROOT/.agents/skills/researcher/scripts/download.py" --project-root "$PROJECT_ROOT" --workers 5
 ```
 
 A successful download is not permission to commit. `status: done` means the bytes are
